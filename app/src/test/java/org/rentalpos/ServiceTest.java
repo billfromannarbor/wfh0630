@@ -12,6 +12,7 @@ import org.rentalpos.services.iInventoryService;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -122,7 +123,20 @@ public class ServiceTest {
         assertEquals(holidayCharge2, charge2.holiday());
     }
 
-    //todo:  Add readme
+    @Test
+    public void rentalDaysReturnsNumberOfWeekdaysWeekendsAndHolidays() {
+        //Holiday List here
+        LocalDate checkoutDate = LocalDate.of(2024,6, 28);
+        int rentalDayCount = 6;
+
+        iRentalDays rentalDays = new RentalDays(checkoutDate, rentalDayCount);
+        System.out.println(rentalDays);
+
+        assertEquals(3, rentalDays.getWeekdayCount());
+        assertEquals(2, rentalDays.getWeekendCount());
+        assertEquals(1, rentalDays.getHolidayCount());
+    }
+
 
 
 

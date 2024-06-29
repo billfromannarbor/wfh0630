@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+     id("io.freefair.lombok") version "8.6"
 }
 
 repositories {
@@ -19,6 +20,8 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
+
+
 }
 
 testing {
