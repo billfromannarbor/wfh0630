@@ -16,7 +16,7 @@ public class RentalAgreement
     LocalDate dueDate;
     BigDecimal dailyRentalCharge;
     int chargeDays;
-    int prediscountCharge;
+    BigDecimal prediscountCharge;
     int discountPercentage;
     BigDecimal discountAmount;
     BigDecimal finalCharge;
