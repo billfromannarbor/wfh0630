@@ -1,0 +1,142 @@
+package org.rentalpos;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.rentalpos.entities.Charge;
+import org.rentalpos.entities.Tool;
+import org.rentalpos.services.*;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class ProofTests {
+    iInventoryService inventoryService;
+    iChargeService chargeService;
+    private iRentalPos rentalPos;
+
+    @Before
+    public void initializeServices() {
+        inventoryService = new InventoryService(Map.of(
+                "CHNS", new Tool("CHNS","Chainsaw","Stihl"),
+                "LADW", new Tool("LADW","Ladder","Werner"),
+                "JAKD", new Tool("JAKD","Jackhammer","DeWalt"),
+                "JAKR", new Tool("JAKR","Jackhammer","Ridgid")
+        ));
+
+        chargeService = new ChargeService(Map.of(
+                "Ladder", new Charge(BigDecimal.valueOf(1.99), true, true, false),
+                "Chainsaw", new Charge(BigDecimal.valueOf(1.49), true, false, true),
+                "Jackhammer", new Charge(BigDecimal.valueOf(2.99), true, false, false)
+        ));
+
+        new ChargeService(Map.of("Chainsaw",
+                new Charge(BigDecimal.valueOf(1.49), true, true, false)));
+
+        rentalPos = new RentalPos(inventoryService, chargeService);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test1() {
+        RentalAgreement rentalAgreement = rentalPos.checkout("JAKR",
+                LocalDate.of(2015,9, 3),
+                5,101);
+    }
+
+    @Test
+    public void test2() {
+        RentalAgreement rentalAgreement = rentalPos.checkout("LADW",
+                LocalDate.of(2020,7, 2),
+                3,10);
+        //Ladder is 1.99 with No Holiday Charge
+        //7/2(Thursday) - 7/3(Friday),7/4(Saturday),7/5(Sunday)
+        //2 chargeable days * 1.99 = 3.98
+        assertEquals(BigDecimal.valueOf(3.98), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(.40).setScale(2, RoundingMode.HALF_UP), rentalAgreement.getDiscountAmount());
+        assertEquals(BigDecimal.valueOf(3.58), rentalAgreement.getFinalCharge());
+    }
+
+    @Test
+    public void test3() {
+        RentalAgreement rentalAgreement = rentalPos.checkout("CHNS",
+                LocalDate.of(2015,7, 2),
+                5,25);
+        //Chainsaw is 1.49 with No Weekend Charge
+        //7/2(Thursday) - 7/3(Friday),7/4(Saturday),7/5(Sunday),7/6(Monday),7/7(Tuesday)
+        //Friday is the holiday, so charge for that
+        //Saturday and Sunday are weekend days so no charge
+        //Monday Tuesday weekdays
+        //Total day count 5-2=3
+        //3*1.49=4.47
+        //4.47*.25=1.1175 1.12
+        assertEquals(BigDecimal.valueOf(4.47), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(1.12).setScale(2, RoundingMode.HALF_UP), rentalAgreement.getDiscountAmount());
+        assertEquals(BigDecimal.valueOf(3.35), rentalAgreement.getFinalCharge());
+    }
+
+    @Test
+    public void test4() {
+        RentalAgreement rentalAgreement = rentalPos.checkout("JAKD",
+                LocalDate.of(2015,9, 3),
+                6,0);
+        //Jackhammer is 2.99 with No Weekend Charge and No Holiday Charge
+        //9/3/2015 9/3(Thursday) - 9/4(Friday),9/5(Saturday),9/6(Sunday),9/7(Monday),9/9(Tuesday),9/10(Wednesday)
+        //Monday is the holiday, no charge
+        //Saturday and Sunday are weekend days so no charge
+        //Friday, Tuesday, Wednesdays weekdays
+        //Total day count 6-3=3
+        //3*2.99=8.97
+
+        assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_UP),
+                rentalAgreement.getDiscountAmount());
+        assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.getFinalCharge());
+    }
+
+    @Test
+    public void test5() {
+        RentalAgreement rentalAgreement = rentalPos.checkout("JAKR",
+                LocalDate.of(2015,7, 2),
+                9,0);
+        //Jackhammer is 2.99 with No Weekend Charge and No Holiday Charge
+        //7/2(Thursday) - 7/3(Friday),7/4(Saturday),7/5(Sunday),7/6(Monday),7/7(Tuesday),7/8(Wednesday),7/9(Thursday),7/10(Friday),7/11(Saturday)
+        //Friday is the holiday, no charge
+        //Saturday,Sunday,Saturday 3 weekend days  no charge
+        //Monday-Friday weekdays
+        //Total day count 9-5=5
+        //5*2.99=14.95
+        //14.95
+
+        assertEquals(BigDecimal.valueOf(14.95), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_UP),
+                rentalAgreement.getDiscountAmount());
+        assertEquals(BigDecimal.valueOf(14.95), rentalAgreement.getFinalCharge());
+    }
+
+    @Test
+    public void test6() {
+        RentalAgreement rentalAgreement = rentalPos.checkout("JAKR",
+                LocalDate.of(2020,7, 2),
+                4,50);
+        //Jackhammer is 2.99 with No Weekend Charge and No Holiday Charge
+        //7/2(Thursday) - 7/3(Friday),7/4(Saturday),7/5(Sunday),7/6(Monday)
+        //Friday is the holiday, no charge
+        //Saturday,Sunday 2 weekend days  no charge
+        //Monday 1 weekdays
+        //Total day count 4-3=1
+        //1*2.99=2.99
+        //2.99*.50=1.495
+        //2.99-1.50
+
+        assertEquals(BigDecimal.valueOf(2.99), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(1.50).setScale(2, RoundingMode.HALF_UP),
+                rentalAgreement.getDiscountAmount());
+        assertEquals(BigDecimal.valueOf(1.49), rentalAgreement.getFinalCharge());
+    }
+
+
+}

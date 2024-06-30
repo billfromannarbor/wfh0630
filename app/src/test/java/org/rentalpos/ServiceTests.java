@@ -18,7 +18,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class ServiceTest {
+public class ServiceTests {
     @Test
     public void inventoryServiceReturnsTool(){
         String toolCode = "CHNS";
