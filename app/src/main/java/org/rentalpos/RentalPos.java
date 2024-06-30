@@ -40,7 +40,7 @@ public class RentalPos implements iRentalPos {
         builder.dailyRentalCharge(charge.amount());
 
         iRentalDays rentalDays = new RentalDays(checkoutDate, rentalDayCount);
-        int chargeDays = determinedChargeDays(rentalDayCount, charge, rentalDays);
+        int chargeDays = determineChargeDays(charge, rentalDays);
         builder.chargeDays(chargeDays);
 
         BigDecimal preDiscountCharge = charge.amount().multiply(BigDecimal.valueOf(chargeDays));
@@ -59,8 +59,8 @@ public class RentalPos implements iRentalPos {
         return builder.build();
     }
 
-    private int determinedChargeDays(int rentalDayCount, Charge charge, iRentalDays rentalDays) {
-        int chargeDays = rentalDayCount;
+    private int determineChargeDays(Charge charge, iRentalDays rentalDays) {
+        int chargeDays = rentalDays.getDayCount();
         //Are there any holidays?
         if (!charge.holiday())
             chargeDays-=rentalDays.getHolidayCount();
