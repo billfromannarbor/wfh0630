@@ -52,8 +52,21 @@ public class ProofTests {
         //Ladder is 1.99 with No Holiday Charge
         //7/2(Thursday) - 7/3(Friday),7/4(Saturday),7/5(Sunday)
         //2 chargeable days * 1.99 = 3.98
+        assertEquals("LADW", rentalAgreement.toolCode());
+        assertEquals(LocalDate.of(2020,7, 2),
+                rentalAgreement.checkoutDate());
+        assertEquals(3, rentalAgreement.rentalDays());
+
+        assertEquals("Ladder", rentalAgreement.toolType());
+        assertEquals("Werner", rentalAgreement.brand());
+        assertEquals(LocalDate.of(2020,7, 5)
+                ,rentalAgreement.dueDate());
+        assertEquals(BigDecimal.valueOf(1.99), rentalAgreement.dailyRentalCharge());
+        assertEquals(2, rentalAgreement.chargeDays());
         assertEquals(BigDecimal.valueOf(3.98), rentalAgreement.preDiscountCharge());
-        assertEquals(BigDecimal.valueOf(.40).setScale(2, RoundingMode.HALF_UP), rentalAgreement.discountAmount());
+        assertEquals(10, rentalAgreement.discountPercentage());
+        assertEquals(BigDecimal.valueOf(.40).setScale(2, RoundingMode.HALF_UP),
+                rentalAgreement.discountAmount());
         assertEquals(BigDecimal.valueOf(3.58), rentalAgreement.finalCharge());
     }
 
@@ -70,8 +83,20 @@ public class ProofTests {
         //Total day count 5-2=3
         //3*1.49=4.47
         //4.47*.25=1.1175 1.12
+        assertEquals("CHNS", rentalAgreement.toolCode());
+        assertEquals(LocalDate.of(2015,7, 2),
+                rentalAgreement.checkoutDate());
+        assertEquals(5, rentalAgreement.rentalDays());
+        assertEquals("Chainsaw", rentalAgreement.toolType());
+        assertEquals("Stihl", rentalAgreement.brand());
+        assertEquals(LocalDate.of(2015,7, 7)
+                ,rentalAgreement.dueDate());
+        assertEquals(BigDecimal.valueOf(1.49), rentalAgreement.dailyRentalCharge());
+        assertEquals(3, rentalAgreement.chargeDays());
         assertEquals(BigDecimal.valueOf(4.47), rentalAgreement.preDiscountCharge());
-        assertEquals(BigDecimal.valueOf(1.12).setScale(2, RoundingMode.HALF_UP), rentalAgreement.discountAmount());
+        assertEquals(25, rentalAgreement.discountPercentage());
+        assertEquals(BigDecimal.valueOf(1.12).setScale(2, RoundingMode.HALF_UP),
+                rentalAgreement.discountAmount());
         assertEquals(BigDecimal.valueOf(3.35), rentalAgreement.finalCharge());
     }
 
@@ -81,14 +106,23 @@ public class ProofTests {
                 LocalDate.of(2015,9, 3),
                 6,0);
         //Jackhammer is 2.99 with No Weekend Charge and No Holiday Charge
-        //9/3/2015 9/3(Thursday) - 9/4(Friday),9/5(Saturday),9/6(Sunday),9/7(Monday),9/9(Tuesday),9/10(Wednesday)
+        //9/3/2015 9/3(Thursday) - 9/4(Friday),9/5(Saturday),9/6(Sunday),9/7(Monday),9/8(Tuesday),9/9(Wednesday)
         //Monday is the holiday, no charge
         //Saturday and Sunday are weekend days so no charge
         //Friday, Tuesday, Wednesdays weekdays
         //Total day count 6-3=3
         //3*2.99=8.97
-
+        assertEquals("JAKD", rentalAgreement.toolCode());
+        assertEquals(LocalDate.of(2015,9, 3),
+                rentalAgreement.checkoutDate());
+        assertEquals(6, rentalAgreement.rentalDays());
+        assertEquals("Jackhammer", rentalAgreement.toolType());
+        assertEquals("DeWalt", rentalAgreement.brand());
+        assertEquals(LocalDate.of(2015,9, 9), rentalAgreement.dueDate());
+        assertEquals(BigDecimal.valueOf(2.99), rentalAgreement.dailyRentalCharge());
+        assertEquals(3, rentalAgreement.chargeDays());
         assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.preDiscountCharge());
+        assertEquals(0, rentalAgreement.discountPercentage());
         assertEquals(BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_UP),
                 rentalAgreement.discountAmount());
         assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.finalCharge());
@@ -107,8 +141,17 @@ public class ProofTests {
         //Total day count 9-5=5
         //5*2.99=14.95
         //14.95
-
+        assertEquals("JAKR", rentalAgreement.toolCode());
+        assertEquals(LocalDate.of(2015,7, 2),
+                rentalAgreement.checkoutDate());
+        assertEquals(9, rentalAgreement.rentalDays());
+        assertEquals("Jackhammer", rentalAgreement.toolType());
+        assertEquals("Ridgid", rentalAgreement.brand());
+        assertEquals(LocalDate.of(2015,7, 11), rentalAgreement.dueDate());
+        assertEquals(BigDecimal.valueOf(2.99), rentalAgreement.dailyRentalCharge());
+        assertEquals(5, rentalAgreement.chargeDays());
         assertEquals(BigDecimal.valueOf(14.95), rentalAgreement.preDiscountCharge());
+        assertEquals(0, rentalAgreement.discountPercentage());
         assertEquals(BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_UP),
                 rentalAgreement.discountAmount());
         assertEquals(BigDecimal.valueOf(14.95), rentalAgreement.finalCharge());
@@ -128,12 +171,19 @@ public class ProofTests {
         //1*2.99=2.99
         //2.99*.50=1.495
         //2.99-1.50
-
+        assertEquals("JAKR", rentalAgreement.toolCode());
+        assertEquals(LocalDate.of(2020,7, 2),
+                rentalAgreement.checkoutDate());
+        assertEquals(4, rentalAgreement.rentalDays());
+        assertEquals("Jackhammer", rentalAgreement.toolType());
+        assertEquals("Ridgid", rentalAgreement.brand());
+        assertEquals(LocalDate.of(2020,7, 6), rentalAgreement.dueDate());
+        assertEquals(BigDecimal.valueOf(2.99), rentalAgreement.dailyRentalCharge());
+        assertEquals(1, rentalAgreement.chargeDays());
         assertEquals(BigDecimal.valueOf(2.99), rentalAgreement.preDiscountCharge());
+        assertEquals(50, rentalAgreement.discountPercentage());
         assertEquals(BigDecimal.valueOf(1.50).setScale(2, RoundingMode.HALF_UP),
                 rentalAgreement.discountAmount());
         assertEquals(BigDecimal.valueOf(1.49), rentalAgreement.finalCharge());
     }
-
-
 }
