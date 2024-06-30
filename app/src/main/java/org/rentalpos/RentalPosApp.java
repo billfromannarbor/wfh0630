@@ -14,7 +14,7 @@ import java.util.Map;
 public class RentalPosApp {
     iInventoryService inventoryService;
     iChargeService chargeService;
-    private iRentalPos rentalPos;
+    iRentalPos rentalPos;
 
     public RentalPosApp() {
         inventoryService = new InventoryService(Map.of(
@@ -32,13 +32,9 @@ public class RentalPosApp {
 
         rentalPos = new RentalPos(inventoryService, chargeService);
     }
+
     public String getGreeting() {
         return "Bill's Discount Rental Point of Sale system";
-    }
-
-    public static void main(String[] args) {
-        var rentalPosApp = new RentalPosApp();
-        rentalPosApp.run();
     }
 
     private void run() {
@@ -52,7 +48,12 @@ public class RentalPosApp {
         //String checkoutDatePrompt = System.console().readLine();
         //String rentalDayCountPrompt = System.console().readLine();
         //String discountPercentagePrompt = System.console().readLine();
-        
+
         rentalPos.checkout(toolCode, checkoutDate, rentalDayCount, discountPercentage).printToConsole();
+    }
+
+    public static void main(String[] args) {
+        var rentalPosApp = new RentalPosApp();
+        rentalPosApp.run();
     }
 }
