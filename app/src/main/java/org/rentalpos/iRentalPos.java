@@ -1,6 +1,6 @@
 package org.rentalpos;
 
-import org.rentalpos.services.RentalAgreement;
+import org.rentalpos.entities.RentalAgreement;
 
 import java.time.LocalDate;
 

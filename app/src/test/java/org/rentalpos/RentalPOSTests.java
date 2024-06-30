@@ -3,6 +3,7 @@ package org.rentalpos;
 import org.junit.Before;
 import org.junit.Test;
 import org.rentalpos.entities.Charge;
+import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.entities.Tool;
 import org.rentalpos.services.*;
 
@@ -65,8 +66,8 @@ public class RentalPOSTests {
         RentalAgreement rentalAgreement =
                 rentalPos.checkout("CHNS", LocalDate.of(2024,6, 28),
                         6,0);
-        assertEquals("Chainsaw", rentalAgreement.getToolType());
-        assertEquals("Stihl", rentalAgreement.getBrand());
+        assertEquals("Chainsaw", rentalAgreement.toolType());
+        assertEquals("Stihl", rentalAgreement.brand());
     }
 
     @Test
@@ -74,7 +75,7 @@ public class RentalPOSTests {
         RentalAgreement rentalAgreement =
                 rentalPos.checkout("CHNS", LocalDate.of(2024,6, 28),
                         1,0);
-        assertEquals(LocalDate.of(2024,6, 29), rentalAgreement.getDueDate());
+        assertEquals(LocalDate.of(2024,6, 29), rentalAgreement.dueDate());
     }
 
     @Test
@@ -82,22 +83,22 @@ public class RentalPOSTests {
         RentalAgreement rentalAgreement =
                 rentalPos.checkout("CHNS", LocalDate.of(2024,6, 28),
                         1,0);
-        assertEquals(new BigDecimal("1.49"), rentalAgreement.getDailyRentalCharge());
+        assertEquals(new BigDecimal("1.49"), rentalAgreement.dailyRentalCharge());
 
         rentalAgreement =
                 rentalPos.checkout("LADW", LocalDate.of(2024,6, 28),
                         1,0);
-        assertEquals(new BigDecimal("1.99"), rentalAgreement.getDailyRentalCharge());
+        assertEquals(new BigDecimal("1.99"), rentalAgreement.dailyRentalCharge());
 
         rentalAgreement =
                 rentalPos.checkout("JAKD", LocalDate.of(2024,6, 28),
                         1,0);
-        assertEquals(new BigDecimal("2.99"), rentalAgreement.getDailyRentalCharge());
+        assertEquals(new BigDecimal("2.99"), rentalAgreement.dailyRentalCharge());
 
         rentalAgreement =
                 rentalPos.checkout("JAKR", LocalDate.of(2024,6, 28),
                         1,0);
-        assertEquals(new BigDecimal("2.99"), rentalAgreement.getDailyRentalCharge());
+        assertEquals(new BigDecimal("2.99"), rentalAgreement.dailyRentalCharge());
     }
 
     /*
@@ -113,7 +114,7 @@ public class RentalPOSTests {
 
         RentalAgreement rentalAgreement = rentalPos.checkout("LADW", LocalDate.of(2024, 6, 28),
                 6, 0);
-        assertEquals(5, rentalAgreement.getChargeDays());
+        assertEquals(5, rentalAgreement.chargeDays());
     }
 
     //For a Chainsaw, there will no weekend charge, so the result should be 4
@@ -121,7 +122,7 @@ public class RentalPOSTests {
     public void validateChargeDaysReturnedFromCheckoutNoWeekendCharge() {
         RentalAgreement rentalAgreement = rentalPos.checkout("CHNS", LocalDate.of(2024, 6, 28),
                 6, 0);
-        assertEquals(4, rentalAgreement.getChargeDays());
+        assertEquals(4, rentalAgreement.chargeDays());
     }
 
     //For a Jackhammer, there will be no weekend charge and no Holiday charge so result should be 3
@@ -129,7 +130,7 @@ public class RentalPOSTests {
     public void validateChargeDaysReturnedFromCheckoutNoHolidayAndNoWeekendCharge() {
         RentalAgreement rentalAgreement = rentalPos.checkout("JAKD", LocalDate.of(2024, 6, 28),
                 6, 0);
-        assertEquals(3, rentalAgreement.getChargeDays());
+        assertEquals(3, rentalAgreement.chargeDays());
     }
 
     //Prediscount Charge
@@ -139,7 +140,7 @@ public class RentalPOSTests {
         RentalAgreement rentalAgreement =
                 rentalPos.checkout("JAKD", LocalDate.of(2024,6, 28),
                         6,0);
-        assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.preDiscountCharge());
     }
 
     //Prediscount Charge
@@ -148,7 +149,7 @@ public class RentalPOSTests {
     public void validatePrediscountChargeReturnedFromCheckoutChainsaw() {
         RentalAgreement rentalAgreement = rentalPos.checkout("CHNS", LocalDate.of(2024, 6, 28),
                 6, 0);
-        assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.preDiscountCharge());
     }
 
     //Discount amount - calculated from discount % and pre-discount charge. Resulting amount
@@ -159,8 +160,8 @@ public class RentalPOSTests {
     public void validateDiscountAmountReturnedFromCheckoutChainsaw() {
         RentalAgreement rentalAgreement = rentalPos.checkout("CHNS", LocalDate.of(2024, 6, 28),
                 6, 50);
-        assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.getPrediscountCharge());
-        assertEquals(BigDecimal.valueOf(2.98), rentalAgreement.getDiscountAmount());
+        assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.preDiscountCharge());
+        assertEquals(BigDecimal.valueOf(2.98), rentalAgreement.discountAmount());
     }
 
     //5.96*.47 = 2.8012 2.80
@@ -168,8 +169,8 @@ public class RentalPOSTests {
     public void validateDiscountAmountReturnedFromCheckoutChainsaw47() {
         RentalAgreement rentalAgreement = rentalPos.checkout("CHNS", LocalDate.of(2024, 6, 28),
                 6, 47);
-        assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.getPrediscountCharge());
-        assertEquals(BigDecimal.valueOf(2.80).setScale(2), rentalAgreement.getDiscountAmount());
+        assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.preDiscountCharge());
+        assertEquals(BigDecimal.valueOf(2.80).setScale(2), rentalAgreement.discountAmount());
     }
 
     //finalCharge
@@ -181,16 +182,8 @@ public class RentalPOSTests {
     public void validateFinalChargeReturnedFromCheckoutLadder58() {
         RentalAgreement rentalAgreement = rentalPos.checkout("LADW", LocalDate.of(2024, 6, 28),
                 6, 58);
-        assertEquals(BigDecimal.valueOf(9.95), rentalAgreement.getPrediscountCharge());
-        assertEquals(BigDecimal.valueOf(5.77), rentalAgreement.getDiscountAmount());
-        assertEquals(BigDecimal.valueOf(4.18), rentalAgreement.getFinalCharge());
+        assertEquals(BigDecimal.valueOf(9.95), rentalAgreement.preDiscountCharge());
+        assertEquals(BigDecimal.valueOf(5.77), rentalAgreement.discountAmount());
+        assertEquals(BigDecimal.valueOf(4.18), rentalAgreement.finalCharge());
     }
-
-
-
-
-    //todo: Test complicated date scenarios against ChargeDays
-    //todo:  Calculate Rental Charge
-    //todo:  Build formatted output method
-
 }

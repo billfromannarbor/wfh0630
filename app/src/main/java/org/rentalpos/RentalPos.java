@@ -2,7 +2,7 @@ package org.rentalpos;
 
 import lombok.AllArgsConstructor;
 import org.rentalpos.entities.Charge;
-import org.rentalpos.services.RentalAgreement;
+import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.services.iChargeService;
 import org.rentalpos.services.iInventoryService;
 
@@ -24,26 +24,42 @@ public class RentalPos implements iRentalPos {
         if ( discountPercentage<0 || discountPercentage>100 )
             throw new IllegalArgumentException("Discount Percentage must be between 0 and 100");
 
-        RentalAgreement rentalAgreement = new RentalAgreement();
+        var builder = RentalAgreement.builder();
+        builder.toolCode(toolCode);
+        builder.checkoutDate(checkoutDate);
+        builder.rentalDays(rentalDayCount);
+        builder.discountPercentage(discountPercentage);
 
-        rentalAgreement.setToolCode(toolCode);
-        rentalAgreement.setCheckoutDate(checkoutDate);
-        rentalAgreement.setRentalDays(rentalDayCount);
-        rentalAgreement.setDiscountPercentage(discountPercentage);
+        var tool = inventoryService.findTool(toolCode);
+        builder.toolType(tool.toolType());
+        builder.brand(tool.brand());
 
-        rentalAgreement.setToolType(inventoryService.findTool(toolCode).toolType());
-        rentalAgreement.setBrand(inventoryService.findTool(toolCode).brand());
+        builder.dueDate(checkoutDate.plusDays(rentalDayCount));
 
-        rentalAgreement.setDueDate(checkoutDate.plusDays(rentalDayCount));
-
-        Charge charge = chargeService.findCharge(rentalAgreement.getToolType());
-        System.out.println(charge);
-
-        rentalAgreement.setDailyRentalCharge(charge.amount());
+        Charge charge = chargeService.findCharge(tool.toolType());
+        builder.dailyRentalCharge(charge.amount());
 
         iRentalDays rentalDays = new RentalDays(checkoutDate, rentalDayCount);
-        System.out.println(rentalDays);
+        int chargeDays = determinedChargeDays(rentalDayCount, charge, rentalDays);
+        builder.chargeDays(chargeDays);
 
+        BigDecimal preDiscountCharge = charge.amount().multiply(BigDecimal.valueOf(chargeDays));
+        builder.preDiscountCharge(preDiscountCharge);
+
+        //Discount amount - calculated from discount % and pre-discount charge. Resulting amount
+        //rounded half up to cents.
+        BigDecimal discountAmount =
+                preDiscountCharge.multiply(BigDecimal.valueOf(discountPercentage).movePointLeft(2)).
+                        setScale(2, RoundingMode.HALF_UP);
+        builder.discountAmount(discountAmount);
+
+        BigDecimal finalCharge = preDiscountCharge.subtract(discountAmount);
+        builder.finalCharge(finalCharge);
+
+        return builder.build();
+    }
+
+    private int determinedChargeDays(int rentalDayCount, Charge charge, iRentalDays rentalDays) {
         int chargeDays = rentalDayCount;
         //Are there any holidays?
         if (!charge.holiday())
@@ -53,26 +69,6 @@ public class RentalPos implements iRentalPos {
         if (!charge.weekday())
             chargeDays-=rentalDays.getWeekdayCount();
 
-        rentalAgreement.setChargeDays(chargeDays);
-
-        rentalAgreement.setPrediscountCharge(charge.amount().multiply(BigDecimal.valueOf(chargeDays)));
-
-        //Discount amount - calculated from discount % and pre-discount charge. Resulting amount
-        //rounded half up to cents.
-        BigDecimal discountAmount = rentalAgreement.getPrediscountCharge().
-                multiply(BigDecimal.valueOf(rentalAgreement.getDiscountPercentage()).movePointLeft(2));
-
-        //rounded half up to cents.
-        BigDecimal roundedDiscountAmount = discountAmount.setScale(2, RoundingMode.HALF_UP);
-
-        rentalAgreement.setDiscountAmount(roundedDiscountAmount);
-
-        //Final charge - Calculated as pre-discount charge - discount amount.
-        BigDecimal finalCharge = rentalAgreement.getPrediscountCharge().
-                subtract(rentalAgreement.getDiscountAmount());
-
-        rentalAgreement.setFinalCharge(finalCharge);
-
-        return rentalAgreement;
+        return chargeDays;
     }
 }

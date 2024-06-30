@@ -3,6 +3,7 @@ package org.rentalpos;
 import org.junit.Before;
 import org.junit.Test;
 import org.rentalpos.entities.Charge;
+import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.entities.Tool;
 import org.rentalpos.services.*;
 
@@ -12,7 +13,6 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class ProofTests {
     iInventoryService inventoryService;
@@ -34,15 +34,12 @@ public class ProofTests {
                 "Jackhammer", new Charge(BigDecimal.valueOf(2.99), true, false, false)
         ));
 
-        new ChargeService(Map.of("Chainsaw",
-                new Charge(BigDecimal.valueOf(1.49), true, true, false)));
-
         rentalPos = new RentalPos(inventoryService, chargeService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test1() {
-        RentalAgreement rentalAgreement = rentalPos.checkout("JAKR",
+        rentalPos.checkout("JAKR",
                 LocalDate.of(2015,9, 3),
                 5,101);
     }
@@ -55,9 +52,9 @@ public class ProofTests {
         //Ladder is 1.99 with No Holiday Charge
         //7/2(Thursday) - 7/3(Friday),7/4(Saturday),7/5(Sunday)
         //2 chargeable days * 1.99 = 3.98
-        assertEquals(BigDecimal.valueOf(3.98), rentalAgreement.getPrediscountCharge());
-        assertEquals(BigDecimal.valueOf(.40).setScale(2, RoundingMode.HALF_UP), rentalAgreement.getDiscountAmount());
-        assertEquals(BigDecimal.valueOf(3.58), rentalAgreement.getFinalCharge());
+        assertEquals(BigDecimal.valueOf(3.98), rentalAgreement.preDiscountCharge());
+        assertEquals(BigDecimal.valueOf(.40).setScale(2, RoundingMode.HALF_UP), rentalAgreement.discountAmount());
+        assertEquals(BigDecimal.valueOf(3.58), rentalAgreement.finalCharge());
     }
 
     @Test
@@ -73,9 +70,9 @@ public class ProofTests {
         //Total day count 5-2=3
         //3*1.49=4.47
         //4.47*.25=1.1175 1.12
-        assertEquals(BigDecimal.valueOf(4.47), rentalAgreement.getPrediscountCharge());
-        assertEquals(BigDecimal.valueOf(1.12).setScale(2, RoundingMode.HALF_UP), rentalAgreement.getDiscountAmount());
-        assertEquals(BigDecimal.valueOf(3.35), rentalAgreement.getFinalCharge());
+        assertEquals(BigDecimal.valueOf(4.47), rentalAgreement.preDiscountCharge());
+        assertEquals(BigDecimal.valueOf(1.12).setScale(2, RoundingMode.HALF_UP), rentalAgreement.discountAmount());
+        assertEquals(BigDecimal.valueOf(3.35), rentalAgreement.finalCharge());
     }
 
     @Test
@@ -91,10 +88,10 @@ public class ProofTests {
         //Total day count 6-3=3
         //3*2.99=8.97
 
-        assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.preDiscountCharge());
         assertEquals(BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_UP),
-                rentalAgreement.getDiscountAmount());
-        assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.getFinalCharge());
+                rentalAgreement.discountAmount());
+        assertEquals(BigDecimal.valueOf(8.97), rentalAgreement.finalCharge());
     }
 
     @Test
@@ -111,10 +108,10 @@ public class ProofTests {
         //5*2.99=14.95
         //14.95
 
-        assertEquals(BigDecimal.valueOf(14.95), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(14.95), rentalAgreement.preDiscountCharge());
         assertEquals(BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_UP),
-                rentalAgreement.getDiscountAmount());
-        assertEquals(BigDecimal.valueOf(14.95), rentalAgreement.getFinalCharge());
+                rentalAgreement.discountAmount());
+        assertEquals(BigDecimal.valueOf(14.95), rentalAgreement.finalCharge());
     }
 
     @Test
@@ -132,10 +129,10 @@ public class ProofTests {
         //2.99*.50=1.495
         //2.99-1.50
 
-        assertEquals(BigDecimal.valueOf(2.99), rentalAgreement.getPrediscountCharge());
+        assertEquals(BigDecimal.valueOf(2.99), rentalAgreement.preDiscountCharge());
         assertEquals(BigDecimal.valueOf(1.50).setScale(2, RoundingMode.HALF_UP),
-                rentalAgreement.getDiscountAmount());
-        assertEquals(BigDecimal.valueOf(1.49), rentalAgreement.getFinalCharge());
+                rentalAgreement.discountAmount());
+        assertEquals(BigDecimal.valueOf(1.49), rentalAgreement.finalCharge());
     }
 
 
