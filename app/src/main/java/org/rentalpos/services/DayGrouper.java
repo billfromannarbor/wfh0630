@@ -1,7 +1,8 @@
-package org.rentalpos;
+package org.rentalpos.services;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.rentalpos.entities.GroupedDays;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -9,20 +10,20 @@ import java.time.Month;
 
 @Getter
 @ToString
-public class RentalDays implements iRentalDays{
+public class DayGrouper implements iDayGrouper {
     private final LocalDate checkoutDate;
     private final int dayCount;
     private int weekdayCount;
     private int weekendCount;
     private int holidayCount;
 
-    public RentalDays(LocalDate checkoutDate, int rentalDayCount) {
+    public DayGrouper(LocalDate checkoutDate, int rentalDayCount) {
         this.checkoutDate = checkoutDate;
         this.dayCount = rentalDayCount;
-        initializeCounters();
     }
 
-    void initializeCounters() {
+    @Override
+    public GroupedDays getGroupedDays() {
         LocalDate start = checkoutDate.plusDays(1);
         LocalDate end = start.plusDays(dayCount);
 
@@ -35,6 +36,8 @@ public class RentalDays implements iRentalDays{
                     else
                         weekdayCount++;
                 });
+
+        return new GroupedDays(weekdayCount,weekendCount,holidayCount);
     }
 
     boolean isHoliday(LocalDate date) {

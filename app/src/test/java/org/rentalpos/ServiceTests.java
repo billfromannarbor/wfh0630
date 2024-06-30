@@ -4,11 +4,9 @@
 package org.rentalpos;
 
 import org.rentalpos.entities.Charge;
+import org.rentalpos.entities.GroupedDays;
 import org.rentalpos.entities.Tool;
-import org.rentalpos.services.ChargeService;
-import org.rentalpos.services.InventoryService;
-import org.rentalpos.services.iChargeService;
-import org.rentalpos.services.iInventoryService;
+import org.rentalpos.services.*;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -129,12 +127,12 @@ public class ServiceTests {
         LocalDate checkoutDate = LocalDate.of(2024,6, 28);
         int rentalDayCount = 6;
 
-        iRentalDays rentalDays = new RentalDays(checkoutDate, rentalDayCount);
-        System.out.println(rentalDays);
+        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
+        System.out.println(dayCounter);
 
-        assertEquals(3, rentalDays.getWeekdayCount());
-        assertEquals(2, rentalDays.getWeekendCount());
-        assertEquals(1, rentalDays.getHolidayCount());
+        assertEquals(3, dayCounter.weekdays());
+        assertEquals(2, dayCounter.weekendDays());
+        assertEquals(1, dayCounter.holidays());
     }
 
 

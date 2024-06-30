@@ -2,8 +2,11 @@ package org.rentalpos;
 
 import lombok.AllArgsConstructor;
 import org.rentalpos.entities.Charge;
+import org.rentalpos.entities.GroupedDays;
 import org.rentalpos.entities.RentalAgreement;
+import org.rentalpos.services.DayGrouper;
 import org.rentalpos.services.iChargeService;
+import org.rentalpos.services.iDayGrouper;
 import org.rentalpos.services.iInventoryService;
 
 import javax.annotation.Nonnull;
@@ -33,21 +36,19 @@ public class RentalPos implements iRentalPos {
         var tool = inventoryService.findTool(toolCode);
         builder.toolType(tool.toolType());
         builder.brand(tool.brand());
-
         builder.dueDate(checkoutDate.plusDays(rentalDayCount));
 
         Charge charge = chargeService.findCharge(tool.toolType());
         builder.dailyRentalCharge(charge.amount());
 
-        iRentalDays rentalDays = new RentalDays(checkoutDate, rentalDayCount);
-        int chargeDays = determineChargeDays(charge, rentalDays);
+        iDayGrouper dayGrouper = new DayGrouper(checkoutDate, rentalDayCount);
+        int numberOfDaysWithoutCharge = determineNumberOfDaysWithoutCharge(charge, dayGrouper.getGroupedDays());
+        int chargeDays = rentalDayCount - numberOfDaysWithoutCharge;
         builder.chargeDays(chargeDays);
 
         BigDecimal preDiscountCharge = charge.amount().multiply(BigDecimal.valueOf(chargeDays));
         builder.preDiscountCharge(preDiscountCharge);
 
-        //Discount amount - calculated from discount % and pre-discount charge. Resulting amount
-        //rounded half up to cents.
         BigDecimal discountAmount =
                 preDiscountCharge.multiply(BigDecimal.valueOf(discountPercentage).movePointLeft(2)).
                         setScale(2, RoundingMode.HALF_UP);
@@ -59,16 +60,15 @@ public class RentalPos implements iRentalPos {
         return builder.build();
     }
 
-    private int determineChargeDays(Charge charge, iRentalDays rentalDays) {
-        int chargeDays = rentalDays.getDayCount();
-        //Are there any holidays?
+    private int determineNumberOfDaysWithoutCharge(Charge charge, GroupedDays dayCounter) {
+        int daysWithoutCharge = 0;
         if (!charge.holiday())
-            chargeDays-=rentalDays.getHolidayCount();
+            daysWithoutCharge+=dayCounter.holidays();
         if (!charge.weekend())
-            chargeDays-=rentalDays.getWeekendCount();
+            daysWithoutCharge+=dayCounter.weekendDays();
         if (!charge.weekday())
-            chargeDays-=rentalDays.getWeekdayCount();
+            daysWithoutCharge+=dayCounter.weekdays();
 
-        return chargeDays;
+        return daysWithoutCharge;
     }
 }
