@@ -4,5 +4,8 @@
 # Ignore Intellij files
 .idea
 
+# Ignore qodana files
+qodana.yaml
+
 # Ignore Gradle build output directory
 build

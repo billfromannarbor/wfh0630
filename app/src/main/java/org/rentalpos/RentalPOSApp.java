@@ -15,14 +15,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class RentalPOSApp {
-    iInventory inventoryService;
+    iInventory inventory;
     iPricing pricing;
     iRentalPOS rentalPos;
     Options options = new Options();
     CommandLineParser parser;
 
     public RentalPOSApp() {
-        inventoryService = new TestInventory(Map.of(
+        inventory = new TestInventory(Map.of(
                 "CHNS", new Tool("CHNS", "Chainsaw", "Stihl"),
                 "LADW", new Tool("LADW", "Ladder", "Werner"),
                 "JAKD", new Tool("JAKD", "Jackhammer", "DeWalt"),
@@ -35,7 +35,7 @@ public class RentalPOSApp {
                 "Jackhammer", new Price("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
         ));
 
-        rentalPos = new RentalPOS(inventoryService, pricing);
+        rentalPos = new RentalPOS(inventory, pricing);
 
         options.addOption(new Option("h", "help", false, "Help"));
         options.addOption(new Option("l", "listtools", false, "List the available tools"));
@@ -61,7 +61,7 @@ public class RentalPOSApp {
             } else if (commandLine.hasOption("showprices")) {
                 System.out.println(pricing.getAllCharges());
             } else if (commandLine.hasOption("listtools")) {
-                System.out.println("" + inventoryService.getAllTools());
+                System.out.println("" + inventory.getAllTools());
             }
             else if (commandLine.hasOption("tool") &&
                     commandLine.hasOption("rentaldays") &&
@@ -77,11 +77,6 @@ public class RentalPOSApp {
                 rentalAgreement.printToConsole();
             }
         }
-
-
-
-
-        //rentalPos.checkout(toolCode, checkoutDate, rentalDayCount, discountPercentage).printToConsole();
     }
 
     private void printHelp() {
@@ -111,6 +106,4 @@ public class RentalPOSApp {
             rentalPosApp.printHelp();
         }
     }
-
-
 }
