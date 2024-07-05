@@ -74,7 +74,7 @@ public class RentalPosApp {
                 int percentageDiscount = Integer.parseInt(commandLine.getOptionValue("percentagediscount"));
 
                 RentalAgreement rentalAgreement =
-                        rentalPos.checkout(commandLine.getOptionValue("tool"), checkoutDate, percentageDiscount, rentalDays);
+                        rentalPos.checkout(commandLine.getOptionValue("tool"), checkoutDate, rentalDays, percentageDiscount);
                 rentalAgreement.printToConsole();
             }
         }

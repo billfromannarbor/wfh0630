@@ -1,15 +1,11 @@
 package org.rentalpos.services;
 
-import lombok.Getter;
-import lombok.ToString;
 import org.rentalpos.entities.GroupedDays;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 
-@Getter
-@ToString
 public class DayGrouper implements iDayGrouper {
     private final LocalDate checkoutDate;
     private final int dayCount;
@@ -49,7 +45,8 @@ public class DayGrouper implements iDayGrouper {
             if (date.getDayOfMonth()==3 && date.getDayOfWeek()== DayOfWeek.FRIDAY)
                isHoliday=true;
            //July 4th and during the week
-           else if (date.getDayOfMonth()==4 && date.getDayOfWeek()!= DayOfWeek.SATURDAY
+           else if (date.getDayOfMonth()==4
+                    && date.getDayOfWeek()!= DayOfWeek.SATURDAY
                    && date.getDayOfWeek()!= DayOfWeek.SUNDAY)
                isHoliday=true;
            //July 5th and is a Monday

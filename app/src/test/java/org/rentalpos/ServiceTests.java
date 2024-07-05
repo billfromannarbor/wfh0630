@@ -128,18 +128,54 @@ public class ServiceTests {
         int rentalDayCount = 6;
 
         GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
-        System.out.println(dayCounter);
 
         assertEquals(3, dayCounter.weekdays());
         assertEquals(2, dayCounter.weekendDays());
         assertEquals(1, dayCounter.holidays());
     }
 
+    //July 5th and a monday should be a holiday
+    @Test
+    public void rentalSundayJuly4th() {
+        //Holiday List here
+        LocalDate checkoutDate = LocalDate.of(2027,7, 4);
+        int rentalDayCount = 1;
 
+        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
+        //assertEquals(0, dayCounter.);
+        assertEquals(0, dayCounter.weekdays());
+        assertEquals(0, dayCounter.weekendDays());
+        assertEquals(1, dayCounter.holidays());
+    }
 
+    //July 4th and during the week
+    @Test
+    public void rentalWednesdayJuly3rd() {
+        //Holiday List here
+        LocalDate checkoutDate = LocalDate.of(2024,7, 3);
+        int rentalDayCount = 1;
 
+        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
 
+        assertEquals(0, dayCounter.weekdays());
+        assertEquals(0, dayCounter.weekendDays());
+        assertEquals(1, dayCounter.holidays());
+    }
 
+    //July 4th as a Saturday
+    //It's a weekend but not a Holiday
+    @Test
+    public void rentalSaturdayJulyThird() {
+        //Holiday List here
+        LocalDate checkoutDate = LocalDate.of(2026,7, 3);
+        int rentalDayCount = 1;
+
+        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
+        //assertEquals(0, dayCounter.);
+        assertEquals(0, dayCounter.weekdays());
+        assertEquals(1, dayCounter.weekendDays());
+        assertEquals(0, dayCounter.holidays());
+    }
 
 
 }

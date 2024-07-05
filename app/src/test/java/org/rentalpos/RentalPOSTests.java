@@ -34,9 +34,6 @@ public class RentalPOSTests {
                 "Jackhammer", new Charge(BigDecimal.valueOf(2.99), true, false, false)
         ));
 
-        new ChargeService(Map.of("Chainsaw",
-                new Charge(BigDecimal.valueOf(1.49), true, true, false)));
-
         rentalPos = new RentalPos(inventoryService, chargeService);
     }
 
@@ -101,17 +98,9 @@ public class RentalPOSTests {
         assertEquals(new BigDecimal("2.99"), rentalAgreement.dailyRentalCharge());
     }
 
-    /*
-    Charge days - Count of chargeable days, from day after checkout through and including due
-    date, excluding “no charge” days as specified by the tool type.
-
-    6 days from Friday 6/28/2024 takes us through one weekend and up to the fourth of july holiday
-     */
-
     //For a Ladder, there will be no holiday charge, but all other days so the result should be 5
     @Test
     public void validateChargeDaysReturnedFromCheckoutNoHolidayCharge() {
-
         RentalAgreement rentalAgreement = rentalPos.checkout("LADW", LocalDate.of(2024, 6, 28),
                 6, 0);
         assertEquals(5, rentalAgreement.chargeDays());
@@ -125,9 +114,37 @@ public class RentalPOSTests {
         assertEquals(4, rentalAgreement.chargeDays());
     }
 
+    //For a Chainsaw, there will no weekend charge, so the result should be 0
+    @Test
+    public void chargeDaysReturnedFromOneDayFridayCheckoutNoWeekendCharge() {
+        RentalAgreement rentalAgreement =
+                rentalPos.checkout("CHNS",
+                        LocalDate.of(2024, 7, 5),
+                1, 0);
+        assertEquals(0, rentalAgreement.chargeDays());
+    }
+
+    @Test
+    public void chargeDaysReturnedFromOneDaySaturdayCheckoutNoweekendCharge() {
+        RentalAgreement rentalAgreement =
+                rentalPos.checkout("CHNS",
+                        LocalDate.of(2024, 7, 6),
+                        1, 0);
+        assertEquals(0, rentalAgreement.chargeDays());
+    }
+
+    @Test
+    public void chargeDaysReturnedFromOneDaySundayCheckoutNoweekendCharge() {
+        RentalAgreement rentalAgreement =
+                rentalPos.checkout("CHNS",
+                        LocalDate.of(2024, 7, 7),
+                        1, 0);
+        assertEquals(1, rentalAgreement.chargeDays());
+    }
+
     //For a Jackhammer, there will be no weekend charge and no Holiday charge so result should be 3
     @Test
-    public void validateChargeDaysReturnedFromCheckoutNoHolidayAndNoWeekendCharge() {
+    public void chargeDaysReturnedFromCheckoutNoHolidayAndNoWeekendCharge() {
         RentalAgreement rentalAgreement = rentalPos.checkout("JAKD", LocalDate.of(2024, 6, 28),
                 6, 0);
         assertEquals(3, rentalAgreement.chargeDays());
@@ -136,7 +153,7 @@ public class RentalPOSTests {
     //Prediscount Charge
     //Jackhammer - 3 x 2.99 = 8.97
     @Test
-    public void validatePrediscountChargeReturnedFromCheckout() {
+    public void prediscountChargeReturnedFromCheckout() {
         RentalAgreement rentalAgreement =
                 rentalPos.checkout("JAKD", LocalDate.of(2024,6, 28),
                         6,0);
@@ -146,7 +163,7 @@ public class RentalPOSTests {
     //Prediscount Charge
     //Chainsaw - 4 x 1.49 = 5.96
     @Test
-    public void validatePrediscountChargeReturnedFromCheckoutChainsaw() {
+    public void prediscountChargeReturnedFromCheckoutChainsaw() {
         RentalAgreement rentalAgreement = rentalPos.checkout("CHNS", LocalDate.of(2024, 6, 28),
                 6, 0);
         assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.preDiscountCharge());
@@ -157,7 +174,7 @@ public class RentalPOSTests {
 
     //5.96*.50 = 2.98
     @Test
-    public void validateDiscountAmountReturnedFromCheckoutChainsaw() {
+    public void discountAmountReturnedFromCheckoutChainsaw() {
         RentalAgreement rentalAgreement = rentalPos.checkout("CHNS", LocalDate.of(2024, 6, 28),
                 6, 50);
         assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.preDiscountCharge());
@@ -166,7 +183,7 @@ public class RentalPOSTests {
 
     //5.96*.47 = 2.8012 2.80
     @Test
-    public void validateDiscountAmountReturnedFromCheckoutChainsaw47() {
+    public void discountAmountReturnedFromCheckoutChainsaw47() {
         RentalAgreement rentalAgreement = rentalPos.checkout("CHNS", LocalDate.of(2024, 6, 28),
                 6, 47);
         assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.preDiscountCharge());
@@ -179,11 +196,36 @@ public class RentalPOSTests {
     //1.99
     //1.99X5=9.95*.58=5.771 final is 9.95-5.77=4.18
     @Test
-    public void validateFinalChargeReturnedFromCheckoutLadder58() {
+    public void finalChargeReturnedFromCheckoutLadder58() {
         RentalAgreement rentalAgreement = rentalPos.checkout("LADW", LocalDate.of(2024, 6, 28),
                 6, 58);
         assertEquals(BigDecimal.valueOf(9.95), rentalAgreement.preDiscountCharge());
         assertEquals(BigDecimal.valueOf(5.77), rentalAgreement.discountAmount());
         assertEquals(BigDecimal.valueOf(4.18), rentalAgreement.finalCharge());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void missingTool() {
+        RentalAgreement rentalAgreement = rentalPos.checkout("LADD",
+                LocalDate.of(2024, 6, 28),
+                6, 58);
+        assertEquals(BigDecimal.valueOf(9.95), rentalAgreement.preDiscountCharge());
+        assertEquals(BigDecimal.valueOf(5.77), rentalAgreement.discountAmount());
+        assertEquals(BigDecimal.valueOf(4.18), rentalAgreement.finalCharge());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void missingPrice() {
+        chargeService = new ChargeService(Map.of(
+                "Chainsaw", new Charge(BigDecimal.valueOf(1.49), true, false, true),
+                "Jackhammer", new Charge(BigDecimal.valueOf(2.99), true, false, false)
+        ));
+
+        rentalPos = new RentalPos(inventoryService, chargeService);
+        rentalPos.checkout("LADW",
+                LocalDate.of(2024, 6, 28),
+                6, 58);
+    }
+
+
 }

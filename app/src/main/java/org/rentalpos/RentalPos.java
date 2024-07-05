@@ -42,6 +42,9 @@ public class RentalPos implements iRentalPos {
         builder.dueDate(checkoutDate.plusDays(rentalDayCount));
 
         Charge charge = chargeService.findCharge(tool.toolType());
+        if (charge == null)
+            throw new IllegalArgumentException("Charge not found for tool: " + tool);
+
         builder.dailyRentalCharge(charge.amount());
 
         iDayGrouper dayGrouper = new DayGrouper(checkoutDate, rentalDayCount);

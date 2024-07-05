@@ -33,10 +33,24 @@ public class CLISmokeTests {
     }
 
     @Test
+    public void rental() {
+        RentalPosApp rentalPosApp = new RentalPosApp();
+        rentalPosApp.runCLI("-p50", "-r5", "-d9/3/2015", "-tJAKR");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rentalBadToolCode() {
+        RentalPosApp rentalPosApp = new RentalPosApp();
+        rentalPosApp.runCLI("-p50", "-r5", "-d9/3/2015", "-tJAKE");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void rentalPercentageTooHigh() {
         RentalPosApp rentalPosApp = new RentalPosApp();
         rentalPosApp.runCLI("-p101", "-r5", "-d9/3/2015", "-tJAKR");
     }
+
+
 
 
 }
