@@ -59,7 +59,7 @@ public class DayGrouper implements iDayGrouper {
 
         //Labor Day - First Monday in September
         //If this is September and a Monday and the day of the month is less than or equal to 7
-        if ( date.getDayOfMonth()<=7 &&
+        if (date.getDayOfMonth()<=7 &&
                 date.getMonth()== Month.SEPTEMBER && date.getDayOfWeek()!= DayOfWeek.MONDAY)
             isHoliday=true;
 

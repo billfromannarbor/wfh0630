@@ -15,13 +15,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class RentalPOSTests {
-    iInventoryService inventoryService;
+    iInventory inventoryService;
     iChargeService chargeService;
     private iRentalPos rentalPos;
 
     @Before
     public void initializeServices() {
-        inventoryService = new InventoryService(Map.of(
+        inventoryService = new Inventory(Map.of(
                 "CHNS", new Tool("CHNS","Chainsaw","Stihl"),
                 "LADW", new Tool("LADW","Ladder","Werner"),
                 "JAKD", new Tool("JAKD","Jackhammer","DeWalt"),

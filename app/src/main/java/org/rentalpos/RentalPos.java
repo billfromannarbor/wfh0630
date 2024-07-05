@@ -7,7 +7,7 @@ import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.services.DayGrouper;
 import org.rentalpos.services.iChargeService;
 import org.rentalpos.services.iDayGrouper;
-import org.rentalpos.services.iInventoryService;
+import org.rentalpos.services.iInventory;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 public class RentalPos implements iRentalPos {
-    final iInventoryService inventoryService;
+    final iInventory inventoryService;
     final iChargeService chargeService;
 
     @Override
@@ -33,7 +33,10 @@ public class RentalPos implements iRentalPos {
         builder.rentalDays(rentalDayCount);
         builder.discountPercentage(discountPercentage);
 
-        var tool = inventoryService.findTool(toolCode);
+        var tool = inventoryService.getTool(toolCode);
+        if (tool == null)
+            throw new IllegalArgumentException("Tool: " + toolCode +" not found");
+
         builder.toolType(tool.toolType());
         builder.brand(tool.brand());
         builder.dueDate(checkoutDate.plusDays(rentalDayCount));

@@ -23,8 +23,8 @@ public class ServiceTests {
         String toolType = "Chainsaw";
         String brand = "Stihl";
         Map<String, Tool> toolMap = Map.of(toolCode, new Tool(toolCode,toolType,brand));
-    	iInventoryService inventoryService = new InventoryService(toolMap);
-    	Tool tool = inventoryService.findTool(toolCode);
+    	iInventory inventoryService = new Inventory(toolMap);
+    	Tool tool = inventoryService.getTool(toolCode);
     	
     	assertNotNull(tool);	
     	assertEquals(toolCode,tool.toolCode());
@@ -42,15 +42,15 @@ public class ServiceTests {
         String brand2 = "Werner";
         Map<String,Tool> toolMap = Map.of(toolCode1, new Tool(toolCode1,toolType1,brand1),
                 toolCode2, new Tool(toolCode2,toolType2,brand2));
-    	iInventoryService inventoryService = new InventoryService(toolMap);
+    	iInventory inventoryService = new Inventory(toolMap);
     	
-    	Tool tool1 = inventoryService.findTool(toolCode1);	
+    	Tool tool1 = inventoryService.getTool(toolCode1);
     	assertNotNull(tool1);	
     	assertEquals(toolCode1,tool1.toolCode());
     	assertEquals(toolType1,tool1.toolType());
     	assertEquals(brand1,tool1.brand());
     	
-    	Tool tool2 = inventoryService.findTool(toolCode2);	
+    	Tool tool2 = inventoryService.getTool(toolCode2);
     	assertNotNull(tool2);	
     	assertEquals(toolCode2,tool2.toolCode());
     	assertEquals(toolType2,tool2.toolType());
@@ -59,12 +59,12 @@ public class ServiceTests {
 
     @Test
     public void inventoryServiceDoesNotReturnTool() {
-        iInventoryService inventoryService = new InventoryService(new HashMap<>());
-        Tool tool = inventoryService.findTool("MISSING");
+        iInventory inventoryService = new Inventory(new HashMap<>());
+        Tool tool = inventoryService.getTool("MISSING");
         assertNull(tool);
-        inventoryService = new InventoryService(Map.of("CHNS",
+        inventoryService = new Inventory(Map.of("CHNS",
                 new Tool("CHNS","Chainsaw","Stihl")));
-        tool = inventoryService.findTool("MISSING");
+        tool = inventoryService.getTool("MISSING");
         assertNull(tool);
     }
 

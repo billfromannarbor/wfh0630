@@ -3,6 +3,7 @@ package org.rentalpos.services;
 import org.rentalpos.entities.Charge;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.Map;
 
 public class ChargeService implements iChargeService {
@@ -14,5 +15,10 @@ public class ChargeService implements iChargeService {
 
     public Charge findCharge(@Nonnull String toolType) {
         return chargeMap.get(toolType);
+    }
+
+    @Override
+    public Collection<Charge> getAllCharges() {
+        return chargeMap.values();
     }
 }
