@@ -8,6 +8,7 @@ import org.rentalpos.entities.Tool;
 import org.rentalpos.services.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -187,7 +188,7 @@ public class RentalPOSTests {
         RentalAgreement rentalAgreement = rentalPos.checkout("CHNS", LocalDate.of(2024, 6, 28),
                 6, 47);
         assertEquals(BigDecimal.valueOf(5.96), rentalAgreement.preDiscountCharge());
-        assertEquals(BigDecimal.valueOf(2.80).setScale(2), rentalAgreement.discountAmount());
+        assertEquals(BigDecimal.valueOf(2.80).setScale(2, RoundingMode.HALF_UP), rentalAgreement.discountAmount());
     }
 
     //finalCharge
@@ -225,6 +226,21 @@ public class RentalPOSTests {
         rentalPos.checkout("LADW",
                 LocalDate.of(2024, 6, 28),
                 6, 58);
+    }
+
+    //Rental on a weekday and weekday is free
+    @Test
+    public void rentalOnAFreeWeekday() {
+        chargeService = new ChargeService(Map.of(
+                "Chainsaw", new Charge(BigDecimal.valueOf(1.49), false, false, true)
+        ));
+        rentalPos = new RentalPos(inventoryService, chargeService);
+
+        RentalAgreement rentalAgreement = rentalPos.checkout("CHNS",
+                LocalDate.of(2024, 7, 10),
+                1, 0);
+
+        assertEquals(rentalAgreement.chargeDays(),0);
     }
 
 

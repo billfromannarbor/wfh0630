@@ -56,7 +56,7 @@ public class RentalPosApp {
         else {
             var commandLine = parseCommandLine(args);
 
-            if (commandLine.hasOption("Help") || commandLine.hasOption("-h")) {
+            if (commandLine.hasOption("Help")) {
                 printHelp();
             } else if (commandLine.hasOption("showprices")) {
                 System.out.println(chargeService.getAllCharges());
@@ -67,7 +67,6 @@ public class RentalPosApp {
                     commandLine.hasOption("rentaldays") &&
                     commandLine.hasOption("date") &&
                     commandLine.hasOption("percentagediscount")) {
-                System.out.println("get values, Validate and call checkout" );
                 int rentalDays = Integer.parseInt(commandLine.getOptionValue("rentaldays"));
                 LocalDate checkoutDate = LocalDate.parse(commandLine.getOptionValue("date"),
                         DateTimeFormatter.ofPattern("M/d/yyyy"));
