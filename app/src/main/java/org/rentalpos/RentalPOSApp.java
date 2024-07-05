@@ -38,7 +38,7 @@ public class RentalPOSApp {
         rentalPos = new RentalPOS(inventoryService, pricing);
 
         options.addOption(new Option("h", "help", false, "Help"));
-        options.addOption(new Option("l", "listtools", false, "Percentage Discount"));
+        options.addOption(new Option("l", "listtools", false, "List the available tools"));
         options.addOption(new Option("s", "showprices", false, "Show Price List"));
         options.addOption(new Option("t", "tool", true, "ToolCode"));
         options.addOption(new Option("d", "date", true, "Checkout Date"));

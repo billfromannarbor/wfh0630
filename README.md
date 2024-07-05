@@ -12,12 +12,12 @@ To run the cli:
 `run:./gradlew run --args="-p50 -r5 -d9/3/2015 -tJAKR"`
 ```
 usage: Command line syntax:
--d,--date <arg>                 Checkout Date
--h,--help                       Help
--l,--listtools                  Percentage Discount
--p,--percentagediscount <arg>   Percentage Discount
--r,--rentaldays <arg>           Number of days for rental
--s,--showprices                 Show Price List
--t,--tool <arg>                 ToolCode
+ -d,--date <arg>                 Checkout Date
+ -h,--help                       Help
+ -l,--listtools                  List the available tools
+ -p,--percentagediscount <arg>   Percentage Discount
+ -r,--rentaldays <arg>           Number of days for rental
+ -s,--showprices                 Show Price List
+ -t,--tool <arg>                 ToolCode
 ```
 
