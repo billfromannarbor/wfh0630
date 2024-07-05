@@ -6,10 +6,10 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 
-public class Inventory implements iInventory {
+public class TestInventory implements iInventory {
 	final Map<String,Tool> tools;
 
-	public Inventory(@Nonnull Map<String,Tool> tools) {
+	public TestInventory(@Nonnull Map<String,Tool> tools) {
 		this.tools = tools;
 	}
 

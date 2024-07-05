@@ -7,46 +7,46 @@ public class CLISmokeTests {
     //No Args should show help
     @Test
     public void testNoArgumentsPassedIn() {
-        RentalPosApp rentalPosApp = new RentalPosApp();
+        RentalPOSApp rentalPosApp = new RentalPOSApp();
         rentalPosApp.runCLI();
     }
 
     @Test
     public void testShowHelpStatement() {
-        RentalPosApp rentalPosApp = new RentalPosApp();
+        RentalPOSApp rentalPosApp = new RentalPOSApp();
         rentalPosApp.runCLI("-h");
         rentalPosApp.runCLI("--help");
     }
 
     @Test
     public void testShowToolCodes() {
-        RentalPosApp rentalPosApp = new RentalPosApp();
+        RentalPOSApp rentalPosApp = new RentalPOSApp();
         rentalPosApp.runCLI("-l");
         rentalPosApp.runCLI("--listtools");
     }
 
     @Test
     public void testShowPrices() {
-        RentalPosApp rentalPosApp = new RentalPosApp();
+        RentalPOSApp rentalPosApp = new RentalPOSApp();
         rentalPosApp.runCLI("-s");
         rentalPosApp.runCLI("--showprices");
     }
 
     @Test
     public void rental() {
-        RentalPosApp rentalPosApp = new RentalPosApp();
+        RentalPOSApp rentalPosApp = new RentalPOSApp();
         rentalPosApp.runCLI("-p50", "-r5", "-d9/3/2015", "-tJAKR");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void rentalBadToolCode() {
-        RentalPosApp rentalPosApp = new RentalPosApp();
+        RentalPOSApp rentalPosApp = new RentalPOSApp();
         rentalPosApp.runCLI("-p50", "-r5", "-d9/3/2015", "-tJAKE");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void rentalPercentageTooHigh() {
-        RentalPosApp rentalPosApp = new RentalPosApp();
+        RentalPOSApp rentalPosApp = new RentalPOSApp();
         rentalPosApp.runCLI("-p101", "-r5", "-d9/3/2015", "-tJAKR");
     }
 

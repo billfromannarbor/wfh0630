@@ -47,5 +47,5 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "org.rentalpos.RentalPosApp"
+    mainClass = "org.rentalpos.RentalPOSApp"
 }

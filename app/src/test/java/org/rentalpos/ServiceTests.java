@@ -3,8 +3,8 @@
  */
 package org.rentalpos;
 
-import org.rentalpos.entities.Charge;
-import org.rentalpos.entities.GroupedDays;
+import org.rentalpos.entities.Price;
+import org.rentalpos.entities.DayCount;
 import org.rentalpos.entities.Tool;
 import org.rentalpos.services.*;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class ServiceTests {
         String toolType = "Chainsaw";
         String brand = "Stihl";
         Map<String, Tool> toolMap = Map.of(toolCode, new Tool(toolCode,toolType,brand));
-    	iInventory inventoryService = new Inventory(toolMap);
+    	iInventory inventoryService = new TestInventory(toolMap);
     	Tool tool = inventoryService.getTool(toolCode);
     	
     	assertNotNull(tool);	
@@ -42,7 +42,7 @@ public class ServiceTests {
         String brand2 = "Werner";
         Map<String,Tool> toolMap = Map.of(toolCode1, new Tool(toolCode1,toolType1,brand1),
                 toolCode2, new Tool(toolCode2,toolType2,brand2));
-    	iInventory inventoryService = new Inventory(toolMap);
+    	iInventory inventoryService = new TestInventory(toolMap);
     	
     	Tool tool1 = inventoryService.getTool(toolCode1);
     	assertNotNull(tool1);	
@@ -59,10 +59,10 @@ public class ServiceTests {
 
     @Test
     public void inventoryServiceDoesNotReturnTool() {
-        iInventory inventoryService = new Inventory(new HashMap<>());
+        iInventory inventoryService = new TestInventory(new HashMap<>());
         Tool tool = inventoryService.getTool("MISSING");
         assertNull(tool);
-        inventoryService = new Inventory(Map.of("CHNS",
+        inventoryService = new TestInventory(Map.of("CHNS",
                 new Tool("CHNS","Chainsaw","Stihl")));
         tool = inventoryService.getTool("MISSING");
         assertNull(tool);
@@ -75,17 +75,17 @@ public class ServiceTests {
         boolean weekdayCharge = true;
         boolean weekendCharge = true;
         boolean holidayCharge = false;
-        Map<String, Charge> chargeMap = Map.of(toolType,
-                new Charge(chargeAmount, weekdayCharge, weekendCharge, holidayCharge));
-    	iChargeService chargeService = new ChargeService(chargeMap);
+        Map<String, Price> chargeMap = Map.of(toolType,
+                new Price(toolType, chargeAmount, weekdayCharge, weekendCharge, holidayCharge));
+    	iPricing pricing = new TestPricing(chargeMap);
     	
-        Charge charge = chargeService.findCharge(toolType);
+        Price price = pricing.findCharge(toolType);
         
-        assertNotNull(charge);
-        assertEquals(chargeAmount, charge.amount());
-        assertEquals(weekdayCharge, charge.weekday());
-        assertEquals(weekendCharge, charge.weekend());
-        assertEquals(holidayCharge, charge.holiday());
+        assertNotNull(price);
+        assertEquals(chargeAmount, price.amount());
+        assertEquals(weekdayCharge, price.weekday());
+        assertEquals(weekendCharge, price.weekend());
+        assertEquals(holidayCharge, price.holiday());
     }
 
     @Test
@@ -100,25 +100,25 @@ public class ServiceTests {
         boolean weekdayCharge2 = true;
         boolean weekendCharge2 = false;
         boolean holidayCharge2 = true;
-        Map<String, Charge> chargeMap = Map.of(
-                toolType1, new Charge(chargeAmount1, weekdayCharge1, weekendCharge1, holidayCharge1),
-                toolType2, new Charge(chargeAmount2, weekdayCharge2, weekendCharge2, holidayCharge2)
+        Map<String, Price> chargeMap = Map.of(
+                toolType1, new Price(toolType1, chargeAmount1, weekdayCharge1, weekendCharge1, holidayCharge1),
+                toolType2, new Price(toolType2, chargeAmount2, weekdayCharge2, weekendCharge2, holidayCharge2)
         );
 
-        iChargeService chargeService = new ChargeService(chargeMap);
+        iPricing pricing = new TestPricing(chargeMap);
 
-        Charge charge1 = chargeService.findCharge(toolType1);
-        assertNotNull(charge1);
-        assertEquals(chargeAmount1, charge1.amount());
-        assertEquals(weekdayCharge1, charge1.weekday());
-        assertEquals(weekendCharge1, charge1.weekend());
-        assertEquals(holidayCharge1, charge1.holiday());
+        Price price1 = pricing.findCharge(toolType1);
+        assertNotNull(price1);
+        assertEquals(chargeAmount1, price1.amount());
+        assertEquals(weekdayCharge1, price1.weekday());
+        assertEquals(weekendCharge1, price1.weekend());
+        assertEquals(holidayCharge1, price1.holiday());
 
-        Charge charge2 = chargeService.findCharge(toolType2);
-        assertEquals(chargeAmount2, charge2.amount());
-        assertEquals(weekdayCharge2, charge2.weekday());
-        assertEquals(weekendCharge2, charge2.weekend());
-        assertEquals(holidayCharge2, charge2.holiday());
+        Price price2 = pricing.findCharge(toolType2);
+        assertEquals(chargeAmount2, price2.amount());
+        assertEquals(weekdayCharge2, price2.weekday());
+        assertEquals(weekendCharge2, price2.weekend());
+        assertEquals(holidayCharge2, price2.holiday());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ServiceTests {
         LocalDate checkoutDate = LocalDate.of(2024,6, 28);
         int rentalDayCount = 6;
 
-        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
+        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
 
         assertEquals(3, dayCounter.weekdays());
         assertEquals(2, dayCounter.weekendDays());
@@ -141,7 +141,7 @@ public class ServiceTests {
         LocalDate checkoutDate = LocalDate.of(2027,7, 4);
         int rentalDayCount = 1;
 
-        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
+        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
         //assertEquals(0, dayCounter.);
         assertEquals(0, dayCounter.weekdays());
         assertEquals(0, dayCounter.weekendDays());
@@ -155,7 +155,7 @@ public class ServiceTests {
         LocalDate checkoutDate = LocalDate.of(2024,7, 3);
         int rentalDayCount = 1;
 
-        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
+        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
 
         assertEquals(0, dayCounter.weekdays());
         assertEquals(0, dayCounter.weekendDays());
@@ -168,7 +168,7 @@ public class ServiceTests {
         LocalDate checkoutDate = LocalDate.of(2024,7, 10);
         int rentalDayCount = 1;
 
-        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
+        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
 
         assertEquals(1, dayCounter.weekdays());
         assertEquals(0, dayCounter.weekendDays());
@@ -183,7 +183,7 @@ public class ServiceTests {
         LocalDate checkoutDate = LocalDate.of(2026,7, 3);
         int rentalDayCount = 1;
 
-        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
+        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
         //assertEquals(0, dayCounter.);
         assertEquals(0, dayCounter.weekdays());
         assertEquals(1, dayCounter.weekendDays());
@@ -196,7 +196,7 @@ public class ServiceTests {
         LocalDate checkoutDate = LocalDate.of(2027,7, 3);
         int rentalDayCount = 1;
 
-        GroupedDays dayCounter = new DayGrouper(checkoutDate, rentalDayCount).getGroupedDays();
+        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
         //assertEquals(0, dayCounter.);
         assertEquals(0, dayCounter.weekdays());
         assertEquals(1, dayCounter.weekendDays());

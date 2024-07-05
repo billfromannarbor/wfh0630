@@ -1,12 +1,12 @@
 package org.rentalpos;
 
 import lombok.AllArgsConstructor;
-import org.rentalpos.entities.Charge;
-import org.rentalpos.entities.GroupedDays;
+import org.rentalpos.entities.Price;
+import org.rentalpos.entities.DayCount;
 import org.rentalpos.entities.RentalAgreement;
-import org.rentalpos.services.DayGrouper;
-import org.rentalpos.services.iChargeService;
-import org.rentalpos.services.iDayGrouper;
+import org.rentalpos.services.DayCounter;
+import org.rentalpos.services.iPricing;
+import org.rentalpos.services.iDayCounter;
 import org.rentalpos.services.iInventory;
 
 import javax.annotation.Nonnull;
@@ -15,9 +15,9 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 
 @AllArgsConstructor
-public class RentalPos implements iRentalPos {
+public class RentalPOS implements iRentalPOS {
     final iInventory inventoryService;
-    final iChargeService chargeService;
+    final iPricing pricing;
 
     @Override
     public RentalAgreement checkout(@Nonnull String toolCode, @Nonnull LocalDate checkoutDate,
@@ -41,18 +41,18 @@ public class RentalPos implements iRentalPos {
         builder.brand(tool.brand());
         builder.dueDate(checkoutDate.plusDays(rentalDayCount));
 
-        Charge charge = chargeService.findCharge(tool.toolType());
-        if (charge == null)
+        Price price = pricing.findCharge(tool.toolType());
+        if (price == null)
             throw new IllegalArgumentException("Charge not found for tool: " + tool);
 
-        builder.dailyRentalCharge(charge.amount());
+        builder.dailyRentalCharge(price.amount());
 
-        iDayGrouper dayGrouper = new DayGrouper(checkoutDate, rentalDayCount);
-        int numberOfDaysWithoutCharge = determineNumberOfDaysWithoutCharge(charge, dayGrouper.getGroupedDays());
+        iDayCounter dayCounter = new DayCounter(checkoutDate, rentalDayCount);
+        int numberOfDaysWithoutCharge = determineNumberOfDaysWithoutCharge(price, dayCounter.getDayCount());
         int chargeDays = rentalDayCount - numberOfDaysWithoutCharge;
         builder.chargeDays(chargeDays);
 
-        BigDecimal preDiscountCharge = charge.amount().multiply(BigDecimal.valueOf(chargeDays));
+        BigDecimal preDiscountCharge = price.amount().multiply(BigDecimal.valueOf(chargeDays));
         builder.preDiscountCharge(preDiscountCharge);
 
         BigDecimal discountAmount =
@@ -66,13 +66,13 @@ public class RentalPos implements iRentalPos {
         return builder.build();
     }
 
-    private int determineNumberOfDaysWithoutCharge(Charge charge, GroupedDays dayCounter) {
+    private int determineNumberOfDaysWithoutCharge(Price price, DayCount dayCounter) {
         int daysWithoutCharge = 0;
-        if (!charge.holiday())
+        if (!price.holiday())
             daysWithoutCharge+=dayCounter.holidays();
-        if (!charge.weekend())
+        if (!price.weekend())
             daysWithoutCharge+=dayCounter.weekendDays();
-        if (!charge.weekday())
+        if (!price.weekday())
             daysWithoutCharge+=dayCounter.weekdays();
 
         return daysWithoutCharge;

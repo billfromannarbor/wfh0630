@@ -1,12 +1,12 @@
 package org.rentalpos;
 
 import org.apache.commons.cli.*;
-import org.rentalpos.entities.Charge;
+import org.rentalpos.entities.Price;
 import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.entities.Tool;
-import org.rentalpos.services.ChargeService;
-import org.rentalpos.services.Inventory;
-import org.rentalpos.services.iChargeService;
+import org.rentalpos.services.TestPricing;
+import org.rentalpos.services.TestInventory;
+import org.rentalpos.services.iPricing;
 import org.rentalpos.services.iInventory;
 
 import java.math.BigDecimal;
@@ -14,28 +14,28 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-public class RentalPosApp {
+public class RentalPOSApp {
     iInventory inventoryService;
-    iChargeService chargeService;
-    iRentalPos rentalPos;
+    iPricing pricing;
+    iRentalPOS rentalPos;
     Options options = new Options();
     CommandLineParser parser;
 
-    public RentalPosApp() {
-        inventoryService = new Inventory(Map.of(
+    public RentalPOSApp() {
+        inventoryService = new TestInventory(Map.of(
                 "CHNS", new Tool("CHNS", "Chainsaw", "Stihl"),
                 "LADW", new Tool("LADW", "Ladder", "Werner"),
                 "JAKD", new Tool("JAKD", "Jackhammer", "DeWalt"),
                 "JAKR", new Tool("JAKR", "Jackhammer", "Ridgid")
         ));
 
-        chargeService = new ChargeService(Map.of(
-                "Ladder", new Charge(BigDecimal.valueOf(1.99), true, true, false),
-                "Chainsaw", new Charge(BigDecimal.valueOf(1.49), true, false, true),
-                "Jackhammer", new Charge(BigDecimal.valueOf(2.99), true, false, false)
+        pricing = new TestPricing(Map.of(
+                "Ladder", new Price("Ladder", BigDecimal.valueOf(1.99), true, true, false),
+                "Chainsaw", new Price("Chainsaw",BigDecimal.valueOf(1.49), true, false, true),
+                "Jackhammer", new Price("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
         ));
 
-        rentalPos = new RentalPos(inventoryService, chargeService);
+        rentalPos = new RentalPOS(inventoryService, pricing);
 
         options.addOption(new Option("h", "help", false, "Help"));
         options.addOption(new Option("l", "listtools", false, "Percentage Discount"));
@@ -59,7 +59,7 @@ public class RentalPosApp {
             if (commandLine.hasOption("Help")) {
                 printHelp();
             } else if (commandLine.hasOption("showprices")) {
-                System.out.println(chargeService.getAllCharges());
+                System.out.println(pricing.getAllCharges());
             } else if (commandLine.hasOption("listtools")) {
                 System.out.println("" + inventoryService.getAllTools());
             }
@@ -103,7 +103,7 @@ public class RentalPosApp {
     }
 
     public static void main(String[] args) {
-        var rentalPosApp = new RentalPosApp();
+        var rentalPosApp = new RentalPOSApp();
         try {
             rentalPosApp.runCLI(args);
         } catch (RuntimeException e) {

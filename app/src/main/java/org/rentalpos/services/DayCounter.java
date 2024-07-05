@@ -1,25 +1,25 @@
 package org.rentalpos.services;
 
-import org.rentalpos.entities.GroupedDays;
+import org.rentalpos.entities.DayCount;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 
-public class DayGrouper implements iDayGrouper {
+public class DayCounter implements iDayCounter {
     private final LocalDate checkoutDate;
     private final int dayCount;
     private int weekdayCount;
     private int weekendCount;
     private int holidayCount;
 
-    public DayGrouper(LocalDate checkoutDate, int rentalDayCount) {
+    public DayCounter(LocalDate checkoutDate, int rentalDayCount) {
         this.checkoutDate = checkoutDate;
         this.dayCount = rentalDayCount;
     }
 
     @Override
-    public GroupedDays getGroupedDays() {
+    public DayCount getDayCount() {
         LocalDate start = checkoutDate.plusDays(1);
         LocalDate end = start.plusDays(dayCount);
 
@@ -33,7 +33,7 @@ public class DayGrouper implements iDayGrouper {
                         weekdayCount++;
                 });
 
-        return new GroupedDays(weekdayCount,weekendCount,holidayCount);
+        return new DayCount(weekdayCount,weekendCount,holidayCount);
     }
 
     boolean isHoliday(LocalDate date) {

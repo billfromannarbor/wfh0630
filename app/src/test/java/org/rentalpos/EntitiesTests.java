@@ -1,7 +1,7 @@
 package org.rentalpos;
 
 import org.junit.Test;
-import org.rentalpos.entities.Charge;
+import org.rentalpos.entities.Price;
 
 import java.math.BigDecimal;
 
@@ -11,8 +11,8 @@ public class EntitiesTests {
 
     @Test
     public void chargeWithNullAmount() {
-        Charge charge = new Charge(null, false, false, false );
-        assertEquals(new BigDecimal("0"), charge.amount());
+        Price price = new Price("",null, false, false, false );
+        assertEquals(new BigDecimal("0"), price.amount());
     }
 
 }
