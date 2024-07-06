@@ -1,27 +1,27 @@
 package org.rentalpos.services;
 
-import org.rentalpos.entities.Price;
+import org.rentalpos.entities.PriceRules;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 
 /**
- * Map based pricing {@link Price} service for tools
+ * Map based pricing {@link PriceRules} service for tools
  */
 public class TestPricing implements iPricing {
-    final Map<String, Price> priceMap;
+    final Map<String, PriceRules> priceMap;
 
-    public TestPricing(@Nonnull final Map<String, Price> priceMap) {
+    public TestPricing(@Nonnull final Map<String, PriceRules> priceMap) {
         this.priceMap = priceMap;
     }
 
     /**
      * Returns a price for the passed in toolType
      * @param toolType - type of tool
-     * @return {@link Price}
+     * @return {@link PriceRules}
      */
-    public Price getPrice(@Nonnull final String toolType) {
+    public PriceRules getPrice(@Nonnull final String toolType) {
         return this.priceMap.get(toolType);
     }
 
@@ -30,7 +30,7 @@ public class TestPricing implements iPricing {
      * @return Collection
      */
     @Override
-    public Collection<Price> getAllPrices() {
+    public Collection<PriceRules> getAllPrices() {
         return this.priceMap.values();
     }
 }

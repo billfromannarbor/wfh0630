@@ -3,14 +3,12 @@
  */
 package org.rentalpos;
 
-import org.rentalpos.entities.Price;
-import org.rentalpos.entities.DayCount;
+import org.rentalpos.entities.PriceRules;
 import org.rentalpos.entities.Tool;
 import org.rentalpos.services.*;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,17 +73,17 @@ public class ServiceTests {
         final boolean weekdayCharge = true;
         final boolean weekendCharge = true;
         final boolean holidayCharge = false;
-        final Map<String, Price> chargeMap = Map.of(toolType,
-                new Price(toolType, chargeAmount, weekdayCharge, weekendCharge, holidayCharge));
+        final Map<String, PriceRules> chargeMap = Map.of(toolType,
+                new PriceRules(toolType, chargeAmount, weekdayCharge, weekendCharge, holidayCharge));
     	final iPricing pricing = new TestPricing(chargeMap);
     	
-        final Price price = pricing.getPrice(toolType);
+        final PriceRules priceRules = pricing.getPrice(toolType);
         
-        assertNotNull(price);
-        assertEquals(chargeAmount, price.amount());
-        assertEquals(weekdayCharge, price.weekday());
-        assertEquals(weekendCharge, price.weekend());
-        assertEquals(holidayCharge, price.holiday());
+        assertNotNull(priceRules);
+        assertEquals(chargeAmount, priceRules.amount());
+        assertEquals(weekdayCharge, priceRules.weekday());
+        assertEquals(weekendCharge, priceRules.weekend());
+        assertEquals(holidayCharge, priceRules.holiday());
     }
 
     @Test
@@ -100,108 +98,24 @@ public class ServiceTests {
         final boolean weekdayCharge2 = true;
         final boolean weekendCharge2 = false;
         final boolean holidayCharge2 = true;
-        final Map<String, Price> chargeMap = Map.of(
-                toolType1, new Price(toolType1, chargeAmount1, weekdayCharge1, weekendCharge1, holidayCharge1),
-                toolType2, new Price(toolType2, chargeAmount2, weekdayCharge2, weekendCharge2, holidayCharge2)
+        final Map<String, PriceRules> chargeMap = Map.of(
+                toolType1, new PriceRules(toolType1, chargeAmount1, weekdayCharge1, weekendCharge1, holidayCharge1),
+                toolType2, new PriceRules(toolType2, chargeAmount2, weekdayCharge2, weekendCharge2, holidayCharge2)
         );
 
         final iPricing pricing = new TestPricing(chargeMap);
 
-        final Price price1 = pricing.getPrice(toolType1);
-        assertNotNull(price1);
-        assertEquals(chargeAmount1, price1.amount());
-        assertEquals(weekdayCharge1, price1.weekday());
-        assertEquals(weekendCharge1, price1.weekend());
-        assertEquals(holidayCharge1, price1.holiday());
+        final PriceRules priceRules1 = pricing.getPrice(toolType1);
+        assertNotNull(priceRules1);
+        assertEquals(chargeAmount1, priceRules1.amount());
+        assertEquals(weekdayCharge1, priceRules1.weekday());
+        assertEquals(weekendCharge1, priceRules1.weekend());
+        assertEquals(holidayCharge1, priceRules1.holiday());
 
-        final Price price2 = pricing.getPrice(toolType2);
-        assertEquals(chargeAmount2, price2.amount());
-        assertEquals(weekdayCharge2, price2.weekday());
-        assertEquals(weekendCharge2, price2.weekend());
-        assertEquals(holidayCharge2, price2.holiday());
+        final PriceRules priceRules2 = pricing.getPrice(toolType2);
+        assertEquals(chargeAmount2, priceRules2.amount());
+        assertEquals(weekdayCharge2, priceRules2.weekday());
+        assertEquals(weekendCharge2, priceRules2.weekend());
+        assertEquals(holidayCharge2, priceRules2.holiday());
     }
-
-    @Test
-    public void rentalDaysReturnsNumberOfWeekdaysWeekendsAndHolidays() {
-        //Holiday List here
-        final LocalDate checkoutDate = LocalDate.of(2024,6, 28);
-        final int rentalDayCount = 6;
-
-        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
-
-        assertEquals(3, dayCounter.weekdays());
-        assertEquals(2, dayCounter.weekendDays());
-        assertEquals(1, dayCounter.holidays());
-    }
-
-    //July 5th and a monday should be a holiday
-    @Test
-    public void rentalSundayJuly4th() {
-        //Holiday List here
-        final LocalDate checkoutDate = LocalDate.of(2027,7, 4);
-        final int rentalDayCount = 1;
-
-        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
-        //assertEquals(0, dayCounter.);
-        assertEquals(0, dayCounter.weekdays());
-        assertEquals(0, dayCounter.weekendDays());
-        assertEquals(1, dayCounter.holidays());
-    }
-
-    //July 4th and during the week
-    @Test
-    public void rentalWednesdayJuly3rd() {
-        //Holiday List here
-        final LocalDate checkoutDate = LocalDate.of(2024,7, 3);
-        final int rentalDayCount = 1;
-
-        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
-
-        assertEquals(0, dayCounter.weekdays());
-        assertEquals(0, dayCounter.weekendDays());
-        assertEquals(1, dayCounter.holidays());
-    }
-
-    //Rental on a weekday
-    @Test
-    public void rentalOnAWeekday() {
-        final LocalDate checkoutDate = LocalDate.of(2024,7, 10);
-        final int rentalDayCount = 1;
-
-        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
-
-        assertEquals(1, dayCounter.weekdays());
-        assertEquals(0, dayCounter.weekendDays());
-        assertEquals(0, dayCounter.holidays());
-    }
-
-    //July 4th as a Saturday
-    //It's a weekend but not a Holiday
-    @Test
-    public void rentalFridayJulyThird() {
-        //Holiday List here
-        final LocalDate checkoutDate = LocalDate.of(2026,7, 3);
-        final int rentalDayCount = 1;
-
-        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
-        //assertEquals(0, dayCounter.);
-        assertEquals(0, dayCounter.weekdays());
-        assertEquals(1, dayCounter.weekendDays());
-        assertEquals(0, dayCounter.holidays());
-    }
-
-    @Test
-    public void rentalSaturdayJuly3rd() {
-        //Holiday List here
-        final LocalDate checkoutDate = LocalDate.of(2027,7, 3);
-        final int rentalDayCount = 1;
-
-        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
-        //assertEquals(0, dayCounter.);
-        assertEquals(0, dayCounter.weekdays());
-        assertEquals(1, dayCounter.weekendDays());
-        assertEquals(0, dayCounter.holidays());
-    }
-
-
 }

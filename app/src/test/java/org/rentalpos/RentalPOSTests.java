@@ -2,10 +2,12 @@ package org.rentalpos;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.rentalpos.entities.Price;
+import org.rentalpos.entities.PriceRules;
 import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.entities.Tool;
 import org.rentalpos.services.*;
+import org.rentalpos.strategies.SimpleChargeDaysStrategy;
+import org.rentalpos.strategies.iChargeDaysStrategy;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,12 +32,13 @@ public class RentalPOSTests {
         ));
 
         this.pricing = new TestPricing(Map.of(
-                "Ladder", new Price("Ladder", BigDecimal.valueOf(1.99), true, true, false),
-                "Chainsaw", new Price("Chainsaw", BigDecimal.valueOf(1.49), true, false, true),
-                "Jackhammer", new Price("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
+                "Ladder", new PriceRules("Ladder", BigDecimal.valueOf(1.99), true, true, false),
+                "Chainsaw", new PriceRules("Chainsaw", BigDecimal.valueOf(1.49), true, false, true),
+                "Jackhammer", new PriceRules("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
         ));
 
-        this.rentalPos = new RentalPOS(this.inventoryService, this.pricing);
+        final iChargeDaysStrategy chargeDaysStrategy = new SimpleChargeDaysStrategy();
+        this.rentalPos = new RentalPOS(this.inventoryService, this.pricing, chargeDaysStrategy);
     }
 
     @Test
@@ -218,11 +221,12 @@ public class RentalPOSTests {
     @Test(expected = IllegalArgumentException.class)
     public void missingPrice() {
         this.pricing = new TestPricing(Map.of(
-                "Chainsaw", new Price("Chainsaw", BigDecimal.valueOf(1.49), true, false, true),
-                "Jackhammer", new Price("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
+                "Chainsaw", new PriceRules("Chainsaw", BigDecimal.valueOf(1.49), true, false, true),
+                "Jackhammer", new PriceRules("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
         ));
 
-        this.rentalPos = new RentalPOS(this.inventoryService, this.pricing);
+        final iChargeDaysStrategy chargeDaysStrategy = new SimpleChargeDaysStrategy();
+        this.rentalPos = new RentalPOS(this.inventoryService, this.pricing, chargeDaysStrategy);
         this.rentalPos.checkout("LADW",
                 LocalDate.of(2024, 6, 28),
                 6, 58);
@@ -232,9 +236,11 @@ public class RentalPOSTests {
     @Test
     public void rentalOnAFreeWeekday() {
         this.pricing = new TestPricing(Map.of(
-                "Chainsaw", new Price("Chainsaw", BigDecimal.valueOf(1.49), false, false, true)
+                "Chainsaw", new PriceRules("Chainsaw", BigDecimal.valueOf(1.49), false, false, true)
         ));
-        this.rentalPos = new RentalPOS(this.inventoryService, this.pricing);
+        final iChargeDaysStrategy chargeDaysStrategy = new SimpleChargeDaysStrategy();
+
+        this.rentalPos = new RentalPOS(this.inventoryService, this.pricing,chargeDaysStrategy );
 
         final RentalAgreement rentalAgreement = this.rentalPos.checkout("CHNS",
                 LocalDate.of(2024, 7, 10),

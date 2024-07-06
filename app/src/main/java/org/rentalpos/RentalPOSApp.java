@@ -1,13 +1,15 @@
 package org.rentalpos;
 
 import org.apache.commons.cli.*;
-import org.rentalpos.entities.Price;
+import org.rentalpos.entities.PriceRules;
 import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.entities.Tool;
 import org.rentalpos.services.TestPricing;
 import org.rentalpos.services.TestInventory;
 import org.rentalpos.services.iPricing;
 import org.rentalpos.services.iInventory;
+import org.rentalpos.strategies.SimpleChargeDaysStrategy;
+import org.rentalpos.strategies.iChargeDaysStrategy;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,16 +37,16 @@ public class RentalPOSApp {
         ));
 
         this.pricing = new TestPricing(Map.of(
-                "Ladder", new Price("Ladder", BigDecimal.valueOf(1.99), true, true, false),
-                "Chainsaw", new Price("Chainsaw",BigDecimal.valueOf(1.49), true, false, true),
-                "Jackhammer", new Price("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
+                "Ladder", new PriceRules("Ladder", BigDecimal.valueOf(1.99), true, true, false),
+                "Chainsaw", new PriceRules("Chainsaw",BigDecimal.valueOf(1.49), true, false, true),
+                "Jackhammer", new PriceRules("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
         ));
-
-        this.rentalPos = new RentalPOS(this.inventory, this.pricing);
+        final iChargeDaysStrategy chargeDaysStrategy = new SimpleChargeDaysStrategy();
+        this.rentalPos = new RentalPOS(this.inventory, this.pricing, chargeDaysStrategy);
 
         this.options.addOption(new Option("h", "help", false, "Help"));
         this.options.addOption(new Option("l", "listtools", false, "List the available tools"));
-        this.options.addOption(new Option("s", "showprices", false, "Show Price List"));
+        this.options.addOption(new Option("s", "showprices", false, "Show PriceRules List"));
         this.options.addOption(new Option("t", "tool", true, "ToolCode"));
         this.options.addOption(new Option("d", "date", true, "Checkout Date"));
         this.options.addOption(new Option("r", "rentaldays", true, "Number of days for rental"));
