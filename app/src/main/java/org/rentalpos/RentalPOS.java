@@ -1,13 +1,15 @@
 package org.rentalpos;
 
 import lombok.AllArgsConstructor;
-import org.rentalpos.entities.Price;
+import org.rentalpos.entities.PriceRules;
 import org.rentalpos.entities.DayCount;
 import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.services.DayCounter;
 import org.rentalpos.services.iDayCounter;
 import org.rentalpos.services.iPricing;
 import org.rentalpos.services.iInventory;
+import org.rentalpos.strategies.SimpleChargeDaysStrategy;
+import org.rentalpos.strategies.iChargeDaysStrategy;
 
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
@@ -22,6 +24,7 @@ import java.time.LocalDate;
 public class RentalPOS implements iRentalPOS {
     final iInventory inventory;
     final iPricing pricing;
+    iChargeDaysStrategy chargeDaysStrategy;
 
     /**
      * The business logic for checking out, returns a {@link RentalAgreement} if successful
@@ -58,16 +61,14 @@ public class RentalPOS implements iRentalPOS {
 
         final var price = this.pricing.getPrice(tool.toolType());
         if (null == price)
-            throw new IllegalArgumentException("Charge not found for tool: " + tool);
+            throw new IllegalArgumentException("Price not found for tool: " + tool);
 
         builder.dailyRentalCharge(price.amount());
 
-        iDayCounter dayCounter = new DayCounter(checkoutDate, rentalDayCount);
-        int numberOfDaysWithoutCharge = this.determineNumberOfDaysWithoutCharge(price, dayCounter.getDayCount());
-        int chargeDays = rentalDayCount - numberOfDaysWithoutCharge;
-        builder.chargeDays(chargeDays);
+        int numberOfChargeDays = chargeDaysStrategy.getNumberOfChargeDays(checkoutDate, rentalDayCount, price);
+        builder.chargeDays(numberOfChargeDays);
 
-        BigDecimal preDiscountCharge = price.amount().multiply(BigDecimal.valueOf(chargeDays));
+        BigDecimal preDiscountCharge = price.amount().multiply(BigDecimal.valueOf(numberOfChargeDays));
         builder.preDiscountCharge(preDiscountCharge);
 
         BigDecimal discountAmount =
@@ -81,13 +82,13 @@ public class RentalPOS implements iRentalPOS {
         return builder.build();
     }
 
-    private int determineNumberOfDaysWithoutCharge(final Price price, final DayCount dayCounter) {
+    private int determineNumberOfDaysWithoutCharge(final PriceRules priceRules, final DayCount dayCounter) {
         int daysWithoutCharge = 0;
-        if (!price.holiday())
+        if (!priceRules.holiday())
             daysWithoutCharge+=dayCounter.holidays();
-        if (!price.weekend())
+        if (!priceRules.weekend())
             daysWithoutCharge+=dayCounter.weekendDays();
-        if (!price.weekday())
+        if (!priceRules.weekday())
             daysWithoutCharge+=dayCounter.weekdays();
 
         return daysWithoutCharge;

@@ -1,13 +1,13 @@
 package org.rentalpos.services;
 
-import org.rentalpos.entities.Price;
+import org.rentalpos.entities.PriceRules;
 
 import java.util.Collection;
 
 /**
- * Pricing {@link Price} service for tools
+ * Pricing {@link PriceRules} service for tools
  */
 public interface iPricing {
-    Price getPrice(String toolType);
-    Collection<Price> getAllPrices();
+    PriceRules getPrice(String toolType);
+    Collection<PriceRules> getAllPrices();
 }
