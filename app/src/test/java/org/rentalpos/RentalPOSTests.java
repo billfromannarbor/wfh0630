@@ -24,14 +24,14 @@ public class RentalPOSTests {
 
     @Before
     public void initializeServices() {
-        this.inventoryService = new TestInventory(Map.of(
+        this.inventoryService = new InventoryFromMap(Map.of(
                 "CHNS", new Tool("CHNS","Chainsaw","Stihl"),
                 "LADW", new Tool("LADW","Ladder","Werner"),
                 "JAKD", new Tool("JAKD","Jackhammer","DeWalt"),
                 "JAKR", new Tool("JAKR","Jackhammer","Ridgid")
         ));
 
-        this.pricing = new TestPricing(Map.of(
+        this.pricing = new PricingFromMap(Map.of(
                 "Ladder", new PriceRules("Ladder", BigDecimal.valueOf(1.99), true, true, false),
                 "Chainsaw", new PriceRules("Chainsaw", BigDecimal.valueOf(1.49), true, false, true),
                 "Jackhammer", new PriceRules("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
@@ -220,7 +220,7 @@ public class RentalPOSTests {
 
     @Test(expected = IllegalArgumentException.class)
     public void missingPrice() {
-        this.pricing = new TestPricing(Map.of(
+        this.pricing = new PricingFromMap(Map.of(
                 "Chainsaw", new PriceRules("Chainsaw", BigDecimal.valueOf(1.49), true, false, true),
                 "Jackhammer", new PriceRules("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
         ));
@@ -235,7 +235,7 @@ public class RentalPOSTests {
     //Rental on a weekday and weekday is free
     @Test
     public void rentalOnAFreeWeekday() {
-        this.pricing = new TestPricing(Map.of(
+        this.pricing = new PricingFromMap(Map.of(
                 "Chainsaw", new PriceRules("Chainsaw", BigDecimal.valueOf(1.49), false, false, true)
         ));
         final iChargeDaysStrategy chargeDaysStrategy = new SimpleChargeDaysStrategy();
