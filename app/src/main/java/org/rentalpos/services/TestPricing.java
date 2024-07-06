@@ -6,19 +6,31 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * Map based pricing {@link Price} service for tools
+ */
 public class TestPricing implements iPricing {
-    final Map<String, Price> chargeMap;
+    final Map<String, Price> priceMap;
 
-    public TestPricing(@Nonnull Map<String, Price> chargeMap) {
-        this.chargeMap = chargeMap;
+    public TestPricing(@Nonnull Map<String, Price> priceMap) {
+        this.priceMap = priceMap;
     }
 
-    public Price findCharge(@Nonnull String toolType) {
-        return chargeMap.get(toolType);
+    /**
+     * Returns a price for the passed in toolType
+     * @param toolType - type of tool
+     * @return {@link Price}
+     */
+    public Price getPrice(@Nonnull String toolType) {
+        return priceMap.get(toolType);
     }
 
+    /**
+     * Return all Prices in the map as a Collection
+     * @return Collection
+     */
     @Override
-    public Collection<Price> getAllCharges() {
-        return chargeMap.values();
+    public Collection<Price> getAllPrices() {
+        return priceMap.values();
     }
 }

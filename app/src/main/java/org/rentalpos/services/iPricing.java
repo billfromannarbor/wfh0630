@@ -4,8 +4,10 @@ import org.rentalpos.entities.Price;
 
 import java.util.Collection;
 
+/**
+ * Pricing {@link Price} service for tools
+ */
 public interface iPricing {
-    Price findCharge(String toolType);
-
-    Collection<Price> getAllCharges();
+    Price getPrice(String toolType);
+    Collection<Price> getAllPrices();
 }

@@ -14,11 +14,26 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 
+/**
+ * Represents an implementation of a simple Point of Sale system
+ * Uses {@link iInventory} to retrieve available tools and {@link iPricing} to look up prices
+ */
 @AllArgsConstructor
 public class RentalPOS implements iRentalPOS {
-    final iInventory inventoryService;
+    final iInventory inventory;
     final iPricing pricing;
 
+    /**
+     * The business logic for checking out, returns a {@link RentalAgreement} if successful
+     * @param toolCode - the tool being rented (Must be part of inventory and have a price available in pricing)
+     * @param checkoutDate - the date of checkout (any date)
+     * @param rentalDayCount - The number of days for the rental. (1 or more)
+     * @param discountPercentage - Percent discount to give the customer (1-100)
+     * @return {@link RentalAgreement}
+     * @exception IllegalArgumentException - if rentalDayCount is less than 0
+     * @exception IllegalArgumentException - if discountPercentage is outside the range of 0 to 100
+     * @exception IllegalArgumentException - if toolCode isn't found in inventory or price isn't found in pricing
+     */
     @Override
     public RentalAgreement checkout(@Nonnull String toolCode, @Nonnull LocalDate checkoutDate,
                                     int rentalDayCount, int discountPercentage) {
@@ -33,7 +48,7 @@ public class RentalPOS implements iRentalPOS {
         builder.rentalDays(rentalDayCount);
         builder.discountPercentage(discountPercentage);
 
-        var tool = inventoryService.getTool(toolCode);
+        var tool = inventory.getTool(toolCode);
         if (tool == null)
             throw new IllegalArgumentException("Tool: " + toolCode +" not found");
 
@@ -41,7 +56,7 @@ public class RentalPOS implements iRentalPOS {
         builder.brand(tool.brand());
         builder.dueDate(checkoutDate.plusDays(rentalDayCount));
 
-        Price price = pricing.findCharge(tool.toolType());
+        Price price = pricing.getPrice(tool.toolType());
         if (price == null)
             throw new IllegalArgumentException("Charge not found for tool: " + tool);
 

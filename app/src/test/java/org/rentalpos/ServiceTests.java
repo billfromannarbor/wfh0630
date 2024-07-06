@@ -79,7 +79,7 @@ public class ServiceTests {
                 new Price(toolType, chargeAmount, weekdayCharge, weekendCharge, holidayCharge));
     	iPricing pricing = new TestPricing(chargeMap);
     	
-        Price price = pricing.findCharge(toolType);
+        Price price = pricing.getPrice(toolType);
         
         assertNotNull(price);
         assertEquals(chargeAmount, price.amount());
@@ -107,14 +107,14 @@ public class ServiceTests {
 
         iPricing pricing = new TestPricing(chargeMap);
 
-        Price price1 = pricing.findCharge(toolType1);
+        Price price1 = pricing.getPrice(toolType1);
         assertNotNull(price1);
         assertEquals(chargeAmount1, price1.amount());
         assertEquals(weekdayCharge1, price1.weekday());
         assertEquals(weekendCharge1, price1.weekend());
         assertEquals(holidayCharge1, price1.holiday());
 
-        Price price2 = pricing.findCharge(toolType2);
+        Price price2 = pricing.getPrice(toolType2);
         assertEquals(chargeAmount2, price2.amount());
         assertEquals(weekdayCharge2, price2.weekday());
         assertEquals(weekendCharge2, price2.weekend());

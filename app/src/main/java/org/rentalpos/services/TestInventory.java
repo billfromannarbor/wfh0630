@@ -6,6 +6,9 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * Map based Inventory Service
+ */
 public class TestInventory implements iInventory {
 	final Map<String,Tool> tools;
 
@@ -13,10 +16,19 @@ public class TestInventory implements iInventory {
 		this.tools = tools;
 	}
 
+	/**
+	 * Returns a tool given a specified toolcode
+	 * @param toolCode - pass in a string representing a key to the encapsulated map
+	 * @return {@link Tool}
+	 */
 	public Tool getTool(@Nonnull String toolCode){
 		return tools.get(toolCode);
 	}
 
+	/**
+	 * Return all the tools in the map as a Collection
+	 * @return Collection
+	 */
 	@Override
 	public Collection<Tool> getAllTools() {
 		return tools.values();

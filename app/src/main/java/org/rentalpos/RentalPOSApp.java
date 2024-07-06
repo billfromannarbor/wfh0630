@@ -14,6 +14,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+/**
+ * Represents a very basic CLI using {@link RentalPOS}
+ * The toolcode, date, rentalDays and percentageDiscount are passed in on the command line
+ * the parameters are then validated and {@link RentalPOS#checkout} is called.
+ */
 public class RentalPOSApp {
     iInventory inventory;
     iPricing pricing;
@@ -48,6 +53,10 @@ public class RentalPOSApp {
         parser = new DefaultParser();
     }
 
+    /**
+     * run the console Rental Point of Sale
+     * @param args - arguments passed in from the console.
+     */
     public void runCLI(String... args) {
         System.out.println(getGreeting());
         if (args.length == 0) {
@@ -59,7 +68,7 @@ public class RentalPOSApp {
             if (commandLine.hasOption("Help")) {
                 printHelp();
             } else if (commandLine.hasOption("showprices")) {
-                System.out.println(pricing.getAllCharges());
+                System.out.println(pricing.getAllPrices());
             } else if (commandLine.hasOption("listtools")) {
                 System.out.println("" + inventory.getAllTools());
             }
@@ -85,7 +94,7 @@ public class RentalPOSApp {
                 options);
     }
 
-    public String getGreeting() {
+    private String getGreeting() {
         return "Bill's Discount Rental Point of Sale system";
     }
 

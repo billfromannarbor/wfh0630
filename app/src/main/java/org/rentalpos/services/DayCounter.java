@@ -6,6 +6,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 
+/**
+ * Uses checkoutDate and rentalDayCount to group days in weekdays, weekends or holidays
+ */
 public class DayCounter implements iDayCounter {
     private final LocalDate checkoutDate;
     private final int dayCount;
@@ -18,6 +21,11 @@ public class DayCounter implements iDayCounter {
         this.dayCount = rentalDayCount;
     }
 
+    /**
+     * Starting the day after checkout, group all the dates into
+     * weekdays, weekends or holidays
+     * @return {@link DayCount}
+     */
     @Override
     public DayCount getDayCount() {
         LocalDate start = checkoutDate.plusDays(1);
@@ -36,6 +44,12 @@ public class DayCounter implements iDayCounter {
         return new DayCount(weekdayCount,weekendCount,holidayCount);
     }
 
+    /**
+     * A holiday is the fourth of july or labor day
+     * If the fourth of july is on a weekend, it's celbrated on closest weekday
+     * @param date date to check
+     * @return true if it's a holiday
+     */
     boolean isHoliday(LocalDate date) {
         boolean isHoliday = false;
         //July 4th Holiday
