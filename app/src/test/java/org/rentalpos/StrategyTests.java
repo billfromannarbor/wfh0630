@@ -2,9 +2,7 @@ package org.rentalpos;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.rentalpos.entities.DayCount;
 import org.rentalpos.entities.PriceRules;
-import org.rentalpos.services.DayCounter;
 import org.rentalpos.strategies.SimpleChargeDaysStrategy;
 
 import java.math.BigDecimal;

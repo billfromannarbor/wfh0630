@@ -4,13 +4,11 @@
 package org.rentalpos;
 
 import org.rentalpos.entities.PriceRules;
-import org.rentalpos.entities.DayCount;
 import org.rentalpos.entities.Tool;
 import org.rentalpos.services.*;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.time.*;
 import java.util.HashMap;
 import java.util.Map;
 

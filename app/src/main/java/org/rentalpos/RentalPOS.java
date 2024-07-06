@@ -1,14 +1,9 @@
 package org.rentalpos;
 
 import lombok.AllArgsConstructor;
-import org.rentalpos.entities.PriceRules;
-import org.rentalpos.entities.DayCount;
 import org.rentalpos.entities.RentalAgreement;
-import org.rentalpos.services.DayCounter;
-import org.rentalpos.services.iDayCounter;
 import org.rentalpos.services.iPricing;
 import org.rentalpos.services.iInventory;
-import org.rentalpos.strategies.SimpleChargeDaysStrategy;
 import org.rentalpos.strategies.iChargeDaysStrategy;
 
 import javax.annotation.Nonnull;
@@ -80,17 +75,5 @@ public class RentalPOS implements iRentalPOS {
         builder.finalCharge(finalCharge);
 
         return builder.build();
-    }
-
-    private int determineNumberOfDaysWithoutCharge(final PriceRules priceRules, final DayCount dayCounter) {
-        int daysWithoutCharge = 0;
-        if (!priceRules.holiday())
-            daysWithoutCharge+=dayCounter.holidays();
-        if (!priceRules.weekend())
-            daysWithoutCharge+=dayCounter.weekendDays();
-        if (!priceRules.weekday())
-            daysWithoutCharge+=dayCounter.weekdays();
-
-        return daysWithoutCharge;
     }
 }
