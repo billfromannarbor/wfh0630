@@ -23,7 +23,7 @@ public class ProofTests {
 
     @Before
     public void initializeServices() {
-        this.inventoryService = new TestInventory(Map.of(
+        this.inventoryService = new InventoryFromMap(Map.of(
                 "CHNS", new Tool("CHNS","Chainsaw","Stihl"),
                 "LADW", new Tool("LADW","Ladder","Werner"),
                 "JAKD", new Tool("JAKD","Jackhammer","DeWalt"),

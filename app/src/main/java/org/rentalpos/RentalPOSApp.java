@@ -4,10 +4,7 @@ import org.apache.commons.cli.*;
 import org.rentalpos.entities.PriceRules;
 import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.entities.Tool;
-import org.rentalpos.services.TestPricing;
-import org.rentalpos.services.TestInventory;
-import org.rentalpos.services.iPricing;
-import org.rentalpos.services.iInventory;
+import org.rentalpos.services.*;
 import org.rentalpos.strategies.SimpleChargeDaysStrategy;
 import org.rentalpos.strategies.iChargeDaysStrategy;
 
@@ -29,12 +26,7 @@ public class RentalPOSApp {
     CommandLineParser parser;
 
     public RentalPOSApp() {
-        this.inventory = new TestInventory(Map.of(
-                "CHNS", new Tool("CHNS", "Chainsaw", "Stihl"),
-                "LADW", new Tool("LADW", "Ladder", "Werner"),
-                "JAKD", new Tool("JAKD", "Jackhammer", "DeWalt"),
-                "JAKR", new Tool("JAKR", "Jackhammer", "Ridgid")
-        ));
+        this.inventory = new InventoryFromFile("src/test/resources/inventory.csv");
 
         this.pricing = new TestPricing(Map.of(
                 "Ladder", new PriceRules("Ladder", BigDecimal.valueOf(1.99), true, true, false),
@@ -66,7 +58,6 @@ public class RentalPOSApp {
         }
         else {
             final CommandLine commandLine = this.parseCommandLine(args);
-
             if (commandLine.hasOption("Help")) {
                 this.printHelp();
             } else if (commandLine.hasOption("showprices")) {

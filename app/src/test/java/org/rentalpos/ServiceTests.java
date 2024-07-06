@@ -21,7 +21,7 @@ public class ServiceTests {
         final String toolType = "Chainsaw";
         final String brand = "Stihl";
         final Map<String, Tool> toolMap = Map.of(toolCode, new Tool(toolCode,toolType,brand));
-    	final iInventory inventoryService = new TestInventory(toolMap);
+    	final iInventory inventoryService = new InventoryFromMap(toolMap);
     	final Tool tool = inventoryService.getTool(toolCode);
     	
     	assertNotNull(tool);	
@@ -40,7 +40,7 @@ public class ServiceTests {
         final String brand2 = "Werner";
         final Map<String,Tool> toolMap = Map.of(toolCode1, new Tool(toolCode1,toolType1,brand1),
                 toolCode2, new Tool(toolCode2,toolType2,brand2));
-    	final iInventory inventoryService = new TestInventory(toolMap);
+    	final iInventory inventoryService = new InventoryFromMap(toolMap);
     	
     	final Tool tool1 = inventoryService.getTool(toolCode1);
     	assertNotNull(tool1);	
@@ -57,10 +57,10 @@ public class ServiceTests {
 
     @Test
     public void inventoryServiceDoesNotReturnTool() {
-        iInventory inventoryService = new TestInventory(new HashMap<>());
+        iInventory inventoryService = new InventoryFromMap(new HashMap<>());
         Tool tool = inventoryService.getTool("MISSING");
         assertNull(tool);
-        inventoryService = new TestInventory(Map.of("CHNS",
+        inventoryService = new InventoryFromMap(Map.of("CHNS",
                 new Tool("CHNS","Chainsaw","Stihl")));
         tool = inventoryService.getTool("MISSING");
         assertNull(tool);

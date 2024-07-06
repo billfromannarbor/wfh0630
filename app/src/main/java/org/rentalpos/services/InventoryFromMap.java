@@ -9,10 +9,10 @@ import java.util.Map;
 /**
  * Map based Inventory Service
  */
-public class TestInventory implements iInventory {
+public class InventoryFromMap implements iInventory {
 	final Map<String,Tool> tools;
 
-	public TestInventory(@Nonnull final Map<String,Tool> tools) {
+	public InventoryFromMap(@Nonnull final Map<String,Tool> tools) {
 		this.tools = tools;
 	}
 
