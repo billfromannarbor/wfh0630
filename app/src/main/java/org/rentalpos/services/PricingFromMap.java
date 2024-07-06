@@ -9,10 +9,10 @@ import java.util.Map;
 /**
  * Map based pricing {@link PriceRules} service for tools
  */
-public class TestPricing implements iPricing {
+public class PricingFromMap implements iPricing {
     final Map<String, PriceRules> priceMap;
 
-    public TestPricing(@Nonnull final Map<String, PriceRules> priceMap) {
+    public PricingFromMap(@Nonnull final Map<String, PriceRules> priceMap) {
         this.priceMap = priceMap;
     }
 

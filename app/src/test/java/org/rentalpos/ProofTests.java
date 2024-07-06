@@ -30,7 +30,7 @@ public class ProofTests {
                 "JAKR", new Tool("JAKR","Jackhammer","Ridgid")
         ));
 
-        this.pricing = new TestPricing(Map.of(
+        this.pricing = new PricingFromMap(Map.of(
                 "Ladder", new PriceRules("Ladder", BigDecimal.valueOf(1.99), true, true, false),
                 "Chainsaw", new PriceRules("Chainsaw", BigDecimal.valueOf(1.49), true, false, true),
                 "Jackhammer", new PriceRules("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)

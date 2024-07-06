@@ -3,7 +3,6 @@ package org.rentalpos;
 import org.apache.commons.cli.*;
 import org.rentalpos.entities.PriceRules;
 import org.rentalpos.entities.RentalAgreement;
-import org.rentalpos.entities.Tool;
 import org.rentalpos.services.*;
 import org.rentalpos.strategies.SimpleChargeDaysStrategy;
 import org.rentalpos.strategies.iChargeDaysStrategy;
@@ -28,11 +27,8 @@ public class RentalPOSApp {
     public RentalPOSApp() {
         this.inventory = new InventoryFromFile("src/test/resources/inventory.csv");
 
-        this.pricing = new TestPricing(Map.of(
-                "Ladder", new PriceRules("Ladder", BigDecimal.valueOf(1.99), true, true, false),
-                "Chainsaw", new PriceRules("Chainsaw",BigDecimal.valueOf(1.49), true, false, true),
-                "Jackhammer", new PriceRules("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
-        ));
+        this.pricing = new PricingFromFile("src/test/resources/pricing.csv");
+
         final iChargeDaysStrategy chargeDaysStrategy = new SimpleChargeDaysStrategy();
         this.rentalPos = new RentalPOS(this.inventory, this.pricing, chargeDaysStrategy);
 

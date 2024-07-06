@@ -75,7 +75,7 @@ public class ServiceTests {
         final boolean holidayCharge = false;
         final Map<String, PriceRules> chargeMap = Map.of(toolType,
                 new PriceRules(toolType, chargeAmount, weekdayCharge, weekendCharge, holidayCharge));
-    	final iPricing pricing = new TestPricing(chargeMap);
+    	final iPricing pricing = new PricingFromMap(chargeMap);
     	
         final PriceRules priceRules = pricing.getPrice(toolType);
         
@@ -103,7 +103,7 @@ public class ServiceTests {
                 toolType2, new PriceRules(toolType2, chargeAmount2, weekdayCharge2, weekendCharge2, holidayCharge2)
         );
 
-        final iPricing pricing = new TestPricing(chargeMap);
+        final iPricing pricing = new PricingFromMap(chargeMap);
 
         final PriceRules priceRules1 = pricing.getPrice(toolType1);
         assertNotNull(priceRules1);
