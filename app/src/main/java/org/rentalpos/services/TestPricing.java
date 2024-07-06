@@ -12,7 +12,7 @@ import java.util.Map;
 public class TestPricing implements iPricing {
     final Map<String, Price> priceMap;
 
-    public TestPricing(@Nonnull Map<String, Price> priceMap) {
+    public TestPricing(@Nonnull final Map<String, Price> priceMap) {
         this.priceMap = priceMap;
     }
 
@@ -21,8 +21,8 @@ public class TestPricing implements iPricing {
      * @param toolType - type of tool
      * @return {@link Price}
      */
-    public Price getPrice(@Nonnull String toolType) {
-        return priceMap.get(toolType);
+    public Price getPrice(@Nonnull final String toolType) {
+        return this.priceMap.get(toolType);
     }
 
     /**
@@ -31,6 +31,6 @@ public class TestPricing implements iPricing {
      */
     @Override
     public Collection<Price> getAllPrices() {
-        return priceMap.values();
+        return this.priceMap.values();
     }
 }

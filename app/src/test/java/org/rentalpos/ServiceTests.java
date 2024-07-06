@@ -19,12 +19,12 @@ import static org.junit.Assert.*;
 public class ServiceTests {
     @Test
     public void inventoryServiceReturnsTool(){
-        String toolCode = "CHNS";
-        String toolType = "Chainsaw";
-        String brand = "Stihl";
-        Map<String, Tool> toolMap = Map.of(toolCode, new Tool(toolCode,toolType,brand));
-    	iInventory inventoryService = new TestInventory(toolMap);
-    	Tool tool = inventoryService.getTool(toolCode);
+        final String toolCode = "CHNS";
+        final String toolType = "Chainsaw";
+        final String brand = "Stihl";
+        final Map<String, Tool> toolMap = Map.of(toolCode, new Tool(toolCode,toolType,brand));
+    	final iInventory inventoryService = new TestInventory(toolMap);
+    	final Tool tool = inventoryService.getTool(toolCode);
     	
     	assertNotNull(tool);	
     	assertEquals(toolCode,tool.toolCode());
@@ -34,23 +34,23 @@ public class ServiceTests {
 
     @Test
     public void inventoryServiceReturnsTools(){
-        String toolCode1 = "CHNS";
-        String toolType1 = "Chainsaw";
-        String brand1 = "Stihl";
-        String toolCode2 = "LADW";
-        String toolType2 = "Ladder";
-        String brand2 = "Werner";
-        Map<String,Tool> toolMap = Map.of(toolCode1, new Tool(toolCode1,toolType1,brand1),
+        final String toolCode1 = "CHNS";
+        final String toolType1 = "Chainsaw";
+        final String brand1 = "Stihl";
+        final String toolCode2 = "LADW";
+        final String toolType2 = "Ladder";
+        final String brand2 = "Werner";
+        final Map<String,Tool> toolMap = Map.of(toolCode1, new Tool(toolCode1,toolType1,brand1),
                 toolCode2, new Tool(toolCode2,toolType2,brand2));
-    	iInventory inventoryService = new TestInventory(toolMap);
+    	final iInventory inventoryService = new TestInventory(toolMap);
     	
-    	Tool tool1 = inventoryService.getTool(toolCode1);
+    	final Tool tool1 = inventoryService.getTool(toolCode1);
     	assertNotNull(tool1);	
     	assertEquals(toolCode1,tool1.toolCode());
     	assertEquals(toolType1,tool1.toolType());
     	assertEquals(brand1,tool1.brand());
     	
-    	Tool tool2 = inventoryService.getTool(toolCode2);
+    	final Tool tool2 = inventoryService.getTool(toolCode2);
     	assertNotNull(tool2);	
     	assertEquals(toolCode2,tool2.toolCode());
     	assertEquals(toolType2,tool2.toolType());
@@ -70,16 +70,16 @@ public class ServiceTests {
 
     @Test
     public void chargeServiceReturnsCharge() {
-        String toolType = "Ladder";
-        BigDecimal chargeAmount = BigDecimal.valueOf(1.99);
-        boolean weekdayCharge = true;
-        boolean weekendCharge = true;
-        boolean holidayCharge = false;
-        Map<String, Price> chargeMap = Map.of(toolType,
+        final String toolType = "Ladder";
+        final BigDecimal chargeAmount = BigDecimal.valueOf(1.99);
+        final boolean weekdayCharge = true;
+        final boolean weekendCharge = true;
+        final boolean holidayCharge = false;
+        final Map<String, Price> chargeMap = Map.of(toolType,
                 new Price(toolType, chargeAmount, weekdayCharge, weekendCharge, holidayCharge));
-    	iPricing pricing = new TestPricing(chargeMap);
+    	final iPricing pricing = new TestPricing(chargeMap);
     	
-        Price price = pricing.getPrice(toolType);
+        final Price price = pricing.getPrice(toolType);
         
         assertNotNull(price);
         assertEquals(chargeAmount, price.amount());
@@ -90,31 +90,31 @@ public class ServiceTests {
 
     @Test
     public void chargeServiceReturnsCharges() {
-        String toolType1 = "Ladder";
-        BigDecimal chargeAmount1 = BigDecimal.valueOf(1.99);
-        boolean weekdayCharge1 = true;
-        boolean weekendCharge1 = true;
-        boolean holidayCharge1 = false;
-        String toolType2 = "Chainsaw";
-        BigDecimal chargeAmount2 = BigDecimal.valueOf(1.49);
-        boolean weekdayCharge2 = true;
-        boolean weekendCharge2 = false;
-        boolean holidayCharge2 = true;
-        Map<String, Price> chargeMap = Map.of(
+        final String toolType1 = "Ladder";
+        final BigDecimal chargeAmount1 = BigDecimal.valueOf(1.99);
+        final boolean weekdayCharge1 = true;
+        final boolean weekendCharge1 = true;
+        final boolean holidayCharge1 = false;
+        final String toolType2 = "Chainsaw";
+        final BigDecimal chargeAmount2 = BigDecimal.valueOf(1.49);
+        final boolean weekdayCharge2 = true;
+        final boolean weekendCharge2 = false;
+        final boolean holidayCharge2 = true;
+        final Map<String, Price> chargeMap = Map.of(
                 toolType1, new Price(toolType1, chargeAmount1, weekdayCharge1, weekendCharge1, holidayCharge1),
                 toolType2, new Price(toolType2, chargeAmount2, weekdayCharge2, weekendCharge2, holidayCharge2)
         );
 
-        iPricing pricing = new TestPricing(chargeMap);
+        final iPricing pricing = new TestPricing(chargeMap);
 
-        Price price1 = pricing.getPrice(toolType1);
+        final Price price1 = pricing.getPrice(toolType1);
         assertNotNull(price1);
         assertEquals(chargeAmount1, price1.amount());
         assertEquals(weekdayCharge1, price1.weekday());
         assertEquals(weekendCharge1, price1.weekend());
         assertEquals(holidayCharge1, price1.holiday());
 
-        Price price2 = pricing.getPrice(toolType2);
+        final Price price2 = pricing.getPrice(toolType2);
         assertEquals(chargeAmount2, price2.amount());
         assertEquals(weekdayCharge2, price2.weekday());
         assertEquals(weekendCharge2, price2.weekend());
@@ -124,10 +124,10 @@ public class ServiceTests {
     @Test
     public void rentalDaysReturnsNumberOfWeekdaysWeekendsAndHolidays() {
         //Holiday List here
-        LocalDate checkoutDate = LocalDate.of(2024,6, 28);
-        int rentalDayCount = 6;
+        final LocalDate checkoutDate = LocalDate.of(2024,6, 28);
+        final int rentalDayCount = 6;
 
-        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
+        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
 
         assertEquals(3, dayCounter.weekdays());
         assertEquals(2, dayCounter.weekendDays());
@@ -138,10 +138,10 @@ public class ServiceTests {
     @Test
     public void rentalSundayJuly4th() {
         //Holiday List here
-        LocalDate checkoutDate = LocalDate.of(2027,7, 4);
-        int rentalDayCount = 1;
+        final LocalDate checkoutDate = LocalDate.of(2027,7, 4);
+        final int rentalDayCount = 1;
 
-        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
+        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
         //assertEquals(0, dayCounter.);
         assertEquals(0, dayCounter.weekdays());
         assertEquals(0, dayCounter.weekendDays());
@@ -152,10 +152,10 @@ public class ServiceTests {
     @Test
     public void rentalWednesdayJuly3rd() {
         //Holiday List here
-        LocalDate checkoutDate = LocalDate.of(2024,7, 3);
-        int rentalDayCount = 1;
+        final LocalDate checkoutDate = LocalDate.of(2024,7, 3);
+        final int rentalDayCount = 1;
 
-        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
+        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
 
         assertEquals(0, dayCounter.weekdays());
         assertEquals(0, dayCounter.weekendDays());
@@ -165,10 +165,10 @@ public class ServiceTests {
     //Rental on a weekday
     @Test
     public void rentalOnAWeekday() {
-        LocalDate checkoutDate = LocalDate.of(2024,7, 10);
-        int rentalDayCount = 1;
+        final LocalDate checkoutDate = LocalDate.of(2024,7, 10);
+        final int rentalDayCount = 1;
 
-        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
+        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
 
         assertEquals(1, dayCounter.weekdays());
         assertEquals(0, dayCounter.weekendDays());
@@ -180,10 +180,10 @@ public class ServiceTests {
     @Test
     public void rentalFridayJulyThird() {
         //Holiday List here
-        LocalDate checkoutDate = LocalDate.of(2026,7, 3);
-        int rentalDayCount = 1;
+        final LocalDate checkoutDate = LocalDate.of(2026,7, 3);
+        final int rentalDayCount = 1;
 
-        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
+        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
         //assertEquals(0, dayCounter.);
         assertEquals(0, dayCounter.weekdays());
         assertEquals(1, dayCounter.weekendDays());
@@ -193,10 +193,10 @@ public class ServiceTests {
     @Test
     public void rentalSaturdayJuly3rd() {
         //Holiday List here
-        LocalDate checkoutDate = LocalDate.of(2027,7, 3);
-        int rentalDayCount = 1;
+        final LocalDate checkoutDate = LocalDate.of(2027,7, 3);
+        final int rentalDayCount = 1;
 
-        DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
+        final DayCount dayCounter = new DayCounter(checkoutDate, rentalDayCount).getDayCount();
         //assertEquals(0, dayCounter.);
         assertEquals(0, dayCounter.weekdays());
         assertEquals(1, dayCounter.weekendDays());

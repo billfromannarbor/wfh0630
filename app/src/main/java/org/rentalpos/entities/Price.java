@@ -11,8 +11,15 @@ import java.math.BigDecimal;
  * @param holiday - charge on holidays
  */
 public record Price(String toolType, BigDecimal amount, boolean weekday, boolean weekend, boolean holiday) {
+    /**
+     * @param toolType - Key representing a tool
+     * @param amount - Tool Rental Price
+     * @param weekday - Charge for weekday rentals
+     * @param weekend - Charge for weekend rentals
+     * @param holiday - Charge for Holiday rentals
+     */
     public Price {
-        if (amount == null) {
+        if (null == amount) {
             amount = BigDecimal.ZERO;
         }
     }

@@ -12,7 +12,7 @@ import java.util.Map;
 public class TestInventory implements iInventory {
 	final Map<String,Tool> tools;
 
-	public TestInventory(@Nonnull Map<String,Tool> tools) {
+	public TestInventory(@Nonnull final Map<String,Tool> tools) {
 		this.tools = tools;
 	}
 
@@ -21,8 +21,8 @@ public class TestInventory implements iInventory {
 	 * @param toolCode - pass in a string representing a key to the encapsulated map
 	 * @return {@link Tool}
 	 */
-	public Tool getTool(@Nonnull String toolCode){
-		return tools.get(toolCode);
+	public Tool getTool(@Nonnull final String toolCode){
+		return this.tools.get(toolCode);
 	}
 
 	/**
@@ -31,6 +31,6 @@ public class TestInventory implements iInventory {
 	 */
 	@Override
 	public Collection<Tool> getAllTools() {
-		return tools.values();
+		return this.tools.values();
 	}
 }

@@ -5,8 +5,8 @@ import org.rentalpos.entities.Price;
 import org.rentalpos.entities.DayCount;
 import org.rentalpos.entities.RentalAgreement;
 import org.rentalpos.services.DayCounter;
-import org.rentalpos.services.iPricing;
 import org.rentalpos.services.iDayCounter;
+import org.rentalpos.services.iPricing;
 import org.rentalpos.services.iInventory;
 
 import javax.annotation.Nonnull;
@@ -35,11 +35,11 @@ public class RentalPOS implements iRentalPOS {
      * @exception IllegalArgumentException - if toolCode isn't found in inventory or price isn't found in pricing
      */
     @Override
-    public RentalAgreement checkout(@Nonnull String toolCode, @Nonnull LocalDate checkoutDate,
-                                    int rentalDayCount, int discountPercentage) {
-        if ( rentalDayCount<1 )
+    public final RentalAgreement checkout(@Nonnull String toolCode, @Nonnull LocalDate checkoutDate,
+                                          int rentalDayCount, int discountPercentage) {
+        if (1 > rentalDayCount)
             throw new IllegalArgumentException("Rental Day Count must be greater than 0");
-        if ( discountPercentage<0 || discountPercentage>100 )
+        if (0 > discountPercentage || 100 < discountPercentage)
             throw new IllegalArgumentException("Discount Percentage must be between 0 and 100");
 
         var builder = RentalAgreement.builder();
@@ -48,22 +48,22 @@ public class RentalPOS implements iRentalPOS {
         builder.rentalDays(rentalDayCount);
         builder.discountPercentage(discountPercentage);
 
-        var tool = inventory.getTool(toolCode);
-        if (tool == null)
+        var tool = this.inventory.getTool(toolCode);
+        if (null == tool)
             throw new IllegalArgumentException("Tool: " + toolCode +" not found");
 
         builder.toolType(tool.toolType());
         builder.brand(tool.brand());
         builder.dueDate(checkoutDate.plusDays(rentalDayCount));
 
-        Price price = pricing.getPrice(tool.toolType());
-        if (price == null)
+        final var price = this.pricing.getPrice(tool.toolType());
+        if (null == price)
             throw new IllegalArgumentException("Charge not found for tool: " + tool);
 
         builder.dailyRentalCharge(price.amount());
 
         iDayCounter dayCounter = new DayCounter(checkoutDate, rentalDayCount);
-        int numberOfDaysWithoutCharge = determineNumberOfDaysWithoutCharge(price, dayCounter.getDayCount());
+        int numberOfDaysWithoutCharge = this.determineNumberOfDaysWithoutCharge(price, dayCounter.getDayCount());
         int chargeDays = rentalDayCount - numberOfDaysWithoutCharge;
         builder.chargeDays(chargeDays);
 
@@ -81,7 +81,7 @@ public class RentalPOS implements iRentalPOS {
         return builder.build();
     }
 
-    private int determineNumberOfDaysWithoutCharge(Price price, DayCount dayCounter) {
+    private int determineNumberOfDaysWithoutCharge(final Price price, final DayCount dayCounter) {
         int daysWithoutCharge = 0;
         if (!price.holiday())
             daysWithoutCharge+=dayCounter.holidays();

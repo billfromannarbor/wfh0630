@@ -21,32 +21,32 @@ public class ProofTests {
 
     @Before
     public void initializeServices() {
-        inventoryService = new TestInventory(Map.of(
+        this.inventoryService = new TestInventory(Map.of(
                 "CHNS", new Tool("CHNS","Chainsaw","Stihl"),
                 "LADW", new Tool("LADW","Ladder","Werner"),
                 "JAKD", new Tool("JAKD","Jackhammer","DeWalt"),
                 "JAKR", new Tool("JAKR","Jackhammer","Ridgid")
         ));
 
-        pricing = new TestPricing(Map.of(
+        this.pricing = new TestPricing(Map.of(
                 "Ladder", new Price("Ladder", BigDecimal.valueOf(1.99), true, true, false),
                 "Chainsaw", new Price("Chainsaw", BigDecimal.valueOf(1.49), true, false, true),
                 "Jackhammer", new Price("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
         ));
 
-        rentalPos = new RentalPOS(inventoryService, pricing);
+        this.rentalPos = new RentalPOS(this.inventoryService, this.pricing);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test1() {
-        rentalPos.checkout("JAKR",
+        this.rentalPos.checkout("JAKR",
                 LocalDate.of(2015,9, 3),
                 5,101);
     }
 
     @Test
     public void test2() {
-        RentalAgreement rentalAgreement = rentalPos.checkout("LADW",
+        RentalAgreement rentalAgreement = this.rentalPos.checkout("LADW",
                 LocalDate.of(2020,7, 2),
                 3,10);
         //Ladder is 1.99 with No Holiday Charge
@@ -65,7 +65,7 @@ public class ProofTests {
         assertEquals(2, rentalAgreement.chargeDays());
         assertEquals(BigDecimal.valueOf(3.98), rentalAgreement.preDiscountCharge());
         assertEquals(10, rentalAgreement.discountPercentage());
-        assertEquals(BigDecimal.valueOf(.40).setScale(2, RoundingMode.HALF_UP),
+        assertEquals(BigDecimal.valueOf(0.40).setScale(2, RoundingMode.HALF_UP),
                 rentalAgreement.discountAmount());
         assertEquals(BigDecimal.valueOf(3.58), rentalAgreement.finalCharge());
     }
@@ -102,7 +102,7 @@ public class ProofTests {
 
     @Test
     public void test4() {
-        RentalAgreement rentalAgreement = rentalPos.checkout("JAKD",
+        final RentalAgreement rentalAgreement = this.rentalPos.checkout("JAKD",
                 LocalDate.of(2015,9, 3),
                 6,0);
         //Jackhammer is 2.99 with No Weekend Charge and No Holiday Charge
@@ -130,7 +130,7 @@ public class ProofTests {
 
     @Test
     public void test5() {
-        RentalAgreement rentalAgreement = rentalPos.checkout("JAKR",
+        final RentalAgreement rentalAgreement = this.rentalPos.checkout("JAKR",
                 LocalDate.of(2015,7, 2),
                 9,0);
         //Jackhammer is 2.99 with No Weekend Charge and No Holiday Charge
@@ -159,7 +159,7 @@ public class ProofTests {
 
     @Test
     public void test6() {
-        RentalAgreement rentalAgreement = rentalPos.checkout("JAKR",
+        final RentalAgreement rentalAgreement = this.rentalPos.checkout("JAKR",
                 LocalDate.of(2020,7, 2),
                 4,50);
         //Jackhammer is 2.99 with No Weekend Charge and No Holiday Charge

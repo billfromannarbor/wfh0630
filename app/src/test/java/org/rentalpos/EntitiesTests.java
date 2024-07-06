@@ -11,7 +11,7 @@ public class EntitiesTests {
 
     @Test
     public void chargeWithNullAmount() {
-        Price price = new Price("",null, false, false, false );
+        final Price price = new Price("",null, false, false, false );
         assertEquals(new BigDecimal("0"), price.amount());
     }
 

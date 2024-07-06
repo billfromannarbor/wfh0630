@@ -27,90 +27,90 @@ public class RentalPOSApp {
     CommandLineParser parser;
 
     public RentalPOSApp() {
-        inventory = new TestInventory(Map.of(
+        this.inventory = new TestInventory(Map.of(
                 "CHNS", new Tool("CHNS", "Chainsaw", "Stihl"),
                 "LADW", new Tool("LADW", "Ladder", "Werner"),
                 "JAKD", new Tool("JAKD", "Jackhammer", "DeWalt"),
                 "JAKR", new Tool("JAKR", "Jackhammer", "Ridgid")
         ));
 
-        pricing = new TestPricing(Map.of(
+        this.pricing = new TestPricing(Map.of(
                 "Ladder", new Price("Ladder", BigDecimal.valueOf(1.99), true, true, false),
                 "Chainsaw", new Price("Chainsaw",BigDecimal.valueOf(1.49), true, false, true),
                 "Jackhammer", new Price("Jackhammer", BigDecimal.valueOf(2.99), true, false, false)
         ));
 
-        rentalPos = new RentalPOS(inventory, pricing);
+        this.rentalPos = new RentalPOS(this.inventory, this.pricing);
 
-        options.addOption(new Option("h", "help", false, "Help"));
-        options.addOption(new Option("l", "listtools", false, "List the available tools"));
-        options.addOption(new Option("s", "showprices", false, "Show Price List"));
-        options.addOption(new Option("t", "tool", true, "ToolCode"));
-        options.addOption(new Option("d", "date", true, "Checkout Date"));
-        options.addOption(new Option("r", "rentaldays", true, "Number of days for rental"));
-        options.addOption(new Option("p", "percentagediscount", true, "Percentage Discount"));
+        this.options.addOption(new Option("h", "help", false, "Help"));
+        this.options.addOption(new Option("l", "listtools", false, "List the available tools"));
+        this.options.addOption(new Option("s", "showprices", false, "Show Price List"));
+        this.options.addOption(new Option("t", "tool", true, "ToolCode"));
+        this.options.addOption(new Option("d", "date", true, "Checkout Date"));
+        this.options.addOption(new Option("r", "rentaldays", true, "Number of days for rental"));
+        this.options.addOption(new Option("p", "percentagediscount", true, "Percentage Discount"));
 
-        parser = new DefaultParser();
+        this.parser = new DefaultParser();
     }
 
     /**
      * run the console Rental Point of Sale
      * @param args - arguments passed in from the console.
      */
-    public void runCLI(String... args) {
-        System.out.println(getGreeting());
-        if (args.length == 0) {
-            printHelp();
+    public void runCLI(final String... args) {
+        System.out.println(this.getGreeting());
+        if (0 == args.length) {
+            this.printHelp();
         }
         else {
-            var commandLine = parseCommandLine(args);
+            final CommandLine commandLine = this.parseCommandLine(args);
 
             if (commandLine.hasOption("Help")) {
-                printHelp();
+                this.printHelp();
             } else if (commandLine.hasOption("showprices")) {
-                System.out.println(pricing.getAllPrices());
+                System.out.println(this.pricing.getAllPrices());
             } else if (commandLine.hasOption("listtools")) {
-                System.out.println("" + inventory.getAllTools());
+                System.out.println("" + this.inventory.getAllTools());
             }
             else if (commandLine.hasOption("tool") &&
                     commandLine.hasOption("rentaldays") &&
                     commandLine.hasOption("date") &&
                     commandLine.hasOption("percentagediscount")) {
-                int rentalDays = Integer.parseInt(commandLine.getOptionValue("rentaldays"));
-                LocalDate checkoutDate = LocalDate.parse(commandLine.getOptionValue("date"),
+                final int rentalDays = Integer.parseInt(commandLine.getOptionValue("rentaldays"));
+                final LocalDate checkoutDate = LocalDate.parse(commandLine.getOptionValue("date"),
                         DateTimeFormatter.ofPattern("M/d/yyyy"));
-                int percentageDiscount = Integer.parseInt(commandLine.getOptionValue("percentagediscount"));
+                final int percentageDiscount = Integer.parseInt(commandLine.getOptionValue("percentagediscount"));
 
-                RentalAgreement rentalAgreement =
-                        rentalPos.checkout(commandLine.getOptionValue("tool"), checkoutDate, rentalDays, percentageDiscount);
+                final RentalAgreement rentalAgreement =
+                        this.rentalPos.checkout(commandLine.getOptionValue("tool"), checkoutDate, rentalDays, percentageDiscount);
                 rentalAgreement.printToConsole();
             }
         }
     }
 
     private void printHelp() {
-        HelpFormatter formatter = HelpFormatter.builder().get();
+        final HelpFormatter formatter = HelpFormatter.builder().get();
         formatter.printHelp("Command line syntax:",
-                options);
+                this.options);
     }
 
     private String getGreeting() {
         return "Bill's Discount Rental Point of Sale system";
     }
 
-    CommandLine parseCommandLine(String[] args) {
+    CommandLine parseCommandLine(final String[] args) {
         try {
-            return parser.parse(options, args);
-        } catch (ParseException exp) {
+            return this.parser.parse(this.options, args);
+        } catch (final ParseException exp) {
             throw new RuntimeException("Parsing failed.  Reason: " + exp.getMessage());
         }
     }
 
-    public static void main(String[] args) {
-        var rentalPosApp = new RentalPOSApp();
+    public static void main(final String[] args) {
+        final var rentalPosApp = new RentalPOSApp();
         try {
             rentalPosApp.runCLI(args);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             System.err.println(e.getMessage());
             rentalPosApp.printHelp();
         }

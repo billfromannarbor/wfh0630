@@ -16,9 +16,9 @@ public class DayCounter implements iDayCounter {
     private int weekendCount;
     private int holidayCount;
 
-    public DayCounter(LocalDate checkoutDate, int rentalDayCount) {
+    public DayCounter(final LocalDate checkoutDate, final int rentalDayCount) {
         this.checkoutDate = checkoutDate;
-        this.dayCount = rentalDayCount;
+        dayCount = rentalDayCount;
     }
 
     /**
@@ -28,20 +28,20 @@ public class DayCounter implements iDayCounter {
      */
     @Override
     public DayCount getDayCount() {
-        LocalDate start = checkoutDate.plusDays(1);
-        LocalDate end = start.plusDays(dayCount);
+        final LocalDate start = this.checkoutDate.plusDays(1);
+        final LocalDate end = start.plusDays((long) this.dayCount);
 
         start.datesUntil(end)
                 .forEach(date -> {
-                    if (isHoliday(date))
-                        holidayCount++;
-                    else if (isWeekend(date))
-                        weekendCount++;
+                    if (this.isHoliday(date))
+                        this.holidayCount++;
+                    else if (this.isWeekend(date))
+                        this.weekendCount++;
                     else
-                        weekdayCount++;
+                        this.weekdayCount++;
                 });
 
-        return new DayCount(weekdayCount,weekendCount,holidayCount);
+        return new DayCount(this.weekdayCount, this.weekendCount, this.holidayCount);
     }
 
     /**
@@ -50,34 +50,34 @@ public class DayCounter implements iDayCounter {
      * @param date date to check
      * @return true if it's a holiday
      */
-    boolean isHoliday(LocalDate date) {
+    boolean isHoliday(final LocalDate date) {
         boolean isHoliday = false;
         //July 4th Holiday
-        if ( date.getMonth()== Month.JULY )
+        if (Month.JULY == date.getMonth())
         {
             //July 3rd and is a Monday
-            if (date.getDayOfMonth()==3 && date.getDayOfWeek()== DayOfWeek.FRIDAY)
+            if (3 == date.getDayOfMonth() && DayOfWeek.FRIDAY == date.getDayOfWeek())
                isHoliday=true;
            //July 4th and during the week
-           else if (date.getDayOfMonth()==4
-                    && date.getDayOfWeek()!= DayOfWeek.SATURDAY
-                   && date.getDayOfWeek()!= DayOfWeek.SUNDAY)
+           else if (4 == date.getDayOfMonth()
+                    && DayOfWeek.SATURDAY != date.getDayOfWeek()
+                   && DayOfWeek.SUNDAY != date.getDayOfWeek())
                isHoliday=true;
            //July 5th and is a Monday
-           else if (date.getDayOfMonth()==5 && date.getDayOfWeek()== DayOfWeek.MONDAY)
+           else if (5 == date.getDayOfMonth() && DayOfWeek.MONDAY == date.getDayOfWeek())
                isHoliday=true;
         }
 
         //Labor Day - First Monday in September
         //If this is September and a Monday and the day of the month is less than or equal to 7
-        if (date.getDayOfMonth()<=7 &&
-                date.getMonth()== Month.SEPTEMBER && date.getDayOfWeek()!= DayOfWeek.MONDAY)
+        if (7 >= date.getDayOfMonth() &&
+                Month.SEPTEMBER == date.getMonth() && DayOfWeek.MONDAY != date.getDayOfWeek())
             isHoliday=true;
 
         return isHoliday;
     }
 
-    boolean isWeekend(LocalDate date) {
-        return date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY;
+    boolean isWeekend(final LocalDate date) {
+        return DayOfWeek.SATURDAY == date.getDayOfWeek() || DayOfWeek.SUNDAY == date.getDayOfWeek();
     }
 }
