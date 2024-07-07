@@ -3,7 +3,8 @@
 This is a java code example for a simple Rental Point of Sale system
 
 [iRentalPOS](./app/src/main/java/org/rentalpos/iRentalPOS.java)
-implements a single method: checkout which returns a RentalAgreement.
+implements a single method: checkout which returns a
+[RentalAgreement](./app/src/main/java/org/rentalpos/entities/RentalAgreement.java).
 
 The class [RentalPOS](./app/src/main/java/org/rentalpos/RentalPOS.java)
 uses [iChargeDaysStrategy](./app/src/main/java/org/rentalpos/strategies/iChargeDaysStrategy.java)
