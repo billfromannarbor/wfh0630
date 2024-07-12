@@ -1,3 +1,3 @@
-Ladder,1.99,yes,yes,no
-Chainsaw,1.49,yes,no,yes
-Jackhammer,2.99,yes,no,no
+Ladder,1.99,true,false,true
+Chainsaw,1.49,true,false,true
+Jackhammer,2.99,true,false,false
