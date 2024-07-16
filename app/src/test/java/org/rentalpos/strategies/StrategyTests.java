@@ -1,9 +1,8 @@
-package org.rentalpos;
+package org.rentalpos.strategies;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.rentalpos.entities.PriceRules;
-import org.rentalpos.strategies.SimpleChargeDaysStrategy;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -87,7 +86,6 @@ public class StrategyTests {
 
     @Test
     public void rentalSaturdayJuly3rd() {
-        //Holiday List here
         final LocalDate checkoutDate = LocalDate.of(2027,7, 3);
         final int rentalDayCount = 1;
         PriceRules onlyChargeForWeekenddays = new PriceRules("XXX", BigDecimal.valueOf(1.0),
@@ -97,4 +95,31 @@ public class StrategyTests {
                 rentalDayCount, onlyChargeForWeekenddays);
         assertEquals(1,numberOfWeekenddays);
    }
+
+   //Checkout Date is 9/1/24, which makes the 1 and only rental day Labor Day 9/2
+    @Test
+    public void rentalLaborDaySeptember2() {
+       final LocalDate checkoutDate = LocalDate.of(2024,9, 1);
+       final int rentalDayCount = 1;
+       PriceRules onlyChargeForHolidays = new PriceRules("XXX", BigDecimal.valueOf(1.0),
+               false, false, true);
+       var chargeDaysStrategy = new SimpleChargeDaysStrategy();
+       System.out.println("Checkout Date: " + checkoutDate);
+       int numberOfHolidays = chargeDaysStrategy.getNumberOfChargeDays(checkoutDate,
+               rentalDayCount, onlyChargeForHolidays);
+       assertEquals(1,numberOfHolidays);
+   }
+
+    //Checkout Date is 8/31/2025, which makes the 1 and only rental day Labor Day 9/1/25
+    @Test
+    public void rentalLaborDaySeptember1() {
+        final LocalDate checkoutDate = LocalDate.of(2025,8, 31);
+        final int rentalDayCount = 1;
+        PriceRules onlyChargeForHolidays = new PriceRules("XXX", BigDecimal.valueOf(1.0),
+                false, false, true);
+        var chargeDaysStrategy = new SimpleChargeDaysStrategy();
+        int numberOfHolidays = chargeDaysStrategy.getNumberOfChargeDays(checkoutDate,
+                rentalDayCount, onlyChargeForHolidays);
+        assertEquals(1,numberOfHolidays);
+    }
 }

@@ -76,8 +76,10 @@ public class SimpleChargeDaysStrategy implements iChargeDaysStrategy {
         //Labor Day - First Monday in September
         //If this is September and a Monday and the day of the month is less than or equal to 7
         if (7 >= date.getDayOfMonth() &&
-                Month.SEPTEMBER == date.getMonth() && DayOfWeek.MONDAY != date.getDayOfWeek())
-            isHoliday=true;
+                Month.SEPTEMBER == date.getMonth() && DayOfWeek.MONDAY == date.getDayOfWeek()) {
+            isHoliday = true;
+
+        }
 
         return isHoliday;
     }
